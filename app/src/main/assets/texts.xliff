@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file original="global" datatype="plaintext" source-language="en" target-language="de">
+    <body>
+      <trans-unit id="address_addButton">
+        <source xml:lang="en">Add a new Address</source>
+        <target xml:lang="de">NEUE ADRESSE HINZUFÜGEN</target>
+        <note>create address button</note>
+      </trans-unit>
+      <trans-unit id="address_createButton">
+        <source xml:lang="en">Create Address</source>
+        <target xml:lang="de">ADRESSE ERSTELLEN</target>
+        <note>add address button</note>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

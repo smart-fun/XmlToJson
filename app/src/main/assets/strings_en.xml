@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string translatable="false" name="app_name">XML to JSON App</string>
+    <string translatable="true" name="helloUser">hello %1$s</string>
+    <string name="quit_button">Quit</string>
+</resources>
