@@ -1,5 +1,5 @@
 # XmlToJson
-**XmlToJson** is an Android Studio Library which converts XML to JSON. It takes a String or InputStream as source for the XML and creates a JSONObject that can be directly manipulated or converted into a String.
+**XmlToJson** is an Android Studio Library which converts XML to JSON. It takes a String or InputStream as the source for the XML and creates a JSONObject that can be directly manipulated or converted into a String.
 
 It is fully configurable so that you can change for example attribute names, see the examples below.
 
@@ -7,7 +7,7 @@ It is fully configurable so that you can change for example attribute names, see
 
 ### Basic usage ###
 
-The code to convert a XML String into JSON String is the following:
+The code to convert a XML String into a JSON String is the following:
 
 ```java
 public String convertXmlToJson(String xml) {
@@ -147,7 +147,7 @@ By default, the \<books> tag is not considered as a list
 ```java
 public String convertXmlToJson(String xml) {
     XmlToJson xmlToJson = new XmlToJson.Builder(xml)
-        . Builder.forceListForPath("/books")
+        .forceListForPath("/books")
         .build();
     JSONObject jsonObject = xmlToJson.toJson();
     return jsonObject.toString();
@@ -161,7 +161,7 @@ Now \<books> is considered as a list:
    "books":{  
       "book":[  
          {  
-            "code":"007",
+            "id":"007",
             "content":"James Bond"
          }
       ]
@@ -191,6 +191,8 @@ dependencies {
 ```
 
 ## License
+
+Copyright 2016 Arnaud Guyon
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
