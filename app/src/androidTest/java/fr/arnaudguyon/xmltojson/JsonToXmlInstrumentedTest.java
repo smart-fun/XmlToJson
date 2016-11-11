@@ -45,10 +45,10 @@ public class JsonToXmlInstrumentedTest {
         Context context = InstrumentationRegistry.getTargetContext();
 
         AssetManager assetManager = context.getAssets();
-        InputStream ims = assetManager.open("texts.xliff");
-        XmlToJson xmlToJson = new XmlToJson.Builder(ims, null).build();
+        InputStream inputStream = assetManager.open("texts.xliff");
+        XmlToJson xmlToJson = new XmlToJson.Builder(inputStream, null).build();
         String json = xmlToJson.toJson().toString();
-        ims.close();
+        inputStream.close();
         Log.i("Unit Test", json);
 
         String attended = "{\"xliff\":{\"xmlns\":\"urn:oasis:names:tc:xliff:document:1.2\",\"version\":\"1.2\",\"file\":{\"original\":\"global\",\"datatype\":\"plaintext\",\"source-language\":\"en\",\"target-language\":\"de\",\"body\":{\"trans-unit\":[{\"id\":\"address_addButton\",\"source\":{\"content\":\"Add a new Address\",\"xml:lang\":\"en\"},\"target\":{\"content\":\"NEUE ADRESSE HINZUFÜGEN\",\"xml:lang\":\"de\"},\"note\":\"create address button\"},{\"id\":\"address_createButton\",\"source\":{\"content\":\"Create Address\",\"xml:lang\":\"en\"},\"target\":{\"content\":\"ADRESSE ERSTELLEN\",\"xml:lang\":\"de\"},\"note\":\"add address button\"}]}}}}";
@@ -90,7 +90,7 @@ public class JsonToXmlInstrumentedTest {
         String xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?><books><book id=\"007\">James Bond</book><book id=\"000\">Book for the dummies</book></books>";
 
         XmlToJson xmlToJson = new XmlToJson.Builder(xml)
-                .setAttributeNameReplacement("/books/book/id", "attributeReplacement")
+                .setAttributeName("/books/book/id", "attributeReplacement")
                 .build();
         String json = xmlToJson.toJson().toString();
         Log.i("Unit Test", json);
@@ -105,7 +105,7 @@ public class JsonToXmlInstrumentedTest {
         String xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?><books><book id=\"007\">James Bond</book><book id=\"000\">Book for the dummies</book></books>";
 
         XmlToJson xmlToJson = new XmlToJson.Builder(xml)
-                .setContentNameReplacement("/books/book", "contentReplacement")
+                .setContentName("/books/book", "contentReplacement")
                 .build();
         String json = xmlToJson.toJson().toString();
         Log.i("Unit Test", json);
@@ -133,7 +133,7 @@ public class JsonToXmlInstrumentedTest {
         String xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?><books><book id=\"007\">James Bond</book></books>";
 
         XmlToJson xmlToJson = new XmlToJson.Builder(xml)
-                .forceListForPath("/books")
+                .forceList("/books")
                 .build();
         String json = xmlToJson.toJson().toString();
         Log.i("Unit Test", json);

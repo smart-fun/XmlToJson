@@ -1,5 +1,5 @@
-# XmlToJson
-**XmlToJson** is an Android Studio Library which converts XML to JSON. It takes a String or InputStream as the source for the XML and creates a JSONObject that can be directly manipulated or converted into a String.
+# XML to JSON for Android
+**XML to JSON** is an Android Studio Library which converts XML to JSON. It takes a String or InputStream as the source for the XML and creates a JSONObject that can be directly manipulated or converted into a String.
 
 It is fully configurable so that you can change for example attribute names, see the examples below.
 
@@ -42,13 +42,25 @@ public String convertXmlToJson(String xml) {
 }
 ```
 
+### Use with an InputStream ###
+
+Instead of converting a XML String, you can convert a InputStream, coming from a File for example.
+
+```java
+    AssetManager assetManager = context.getAssets();
+    InputStream inputStream = assetManager.open("myFile.xml");
+    XmlToJson xmlToJson = new XmlToJson.Builder(inputStream, null).build();
+    String json = xmlToJson.toJson().toString();
+    inputStream.close();
+```
+
 ### Custom Content names ###
-By default, the content of a XML Tag is converted into a key called "content". This name can be changed with a custom one, using **Builder.setContentNameReplacement**(String contentPath, String replacementName). You can change as many content names as you want.
+By default, the content of a XML Tag is converted into a key called "content". This name can be changed with a custom one, using **Builder.setContentName**(String contentPath, String replacementName). You can change as many content names as you want.
 
 ```java
 public String convertXmlToJson(String xml) {
     XmlToJson xmlToJson = new XmlToJson.Builder(xml)
-        .setContentNameReplacement("/books/book", "title")
+        .setContentName("/books/book", "title")
         .build();
     JSONObject jsonObject = xmlToJson.toJson();
     return jsonObject.toString();
@@ -82,13 +94,13 @@ public String convertXmlToJson(String xml) {
 
 ### Custom Attributes names ###
 
-Attributes are converted into key / values in the JSON. The attribute names may conflict with other keys. You can change the name of any attribute, by specifying the path to the attribute and the replacement name, using **Builder.setAttributeNameReplacement**(String attributePath, String replacementName).
+Attributes are converted into key / values in the JSON. The attribute names may conflict with other keys. You can change the name of any attribute, by specifying the path to the attribute and the replacement name, using **Builder.setAttributeName**(String attributePath, String replacementName).
 
 
 ```java
 public String convertXmlToJson(String xml) {
     XmlToJson xmlToJson = new XmlToJson.Builder(xml)
-        . Builder.setAttributeNameReplacement("/books/book/id", "code")
+        . Builder.setAttributeName("/books/book/id", "code")
         .build();
     JSONObject jsonObject = xmlToJson.toJson();
     return jsonObject.toString();
@@ -122,7 +134,7 @@ public String convertXmlToJson(String xml) {
 
 ### Forcing a Tag to be a list ###
 
-In a XML hierarchy, an entry can have children. For example, \<books> has 2 entries \<book>. In case there is only one book, there is no way to know that Books is a list. But you can force it using **Builder.forceListForPath**(String path).
+In a XML hierarchy, an entry can have children. For example, \<books> has 2 entries \<book>. In case there is only one book, there is no way to know that Books is a list. But you can force it using **Builder.forceList**(String path).
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
@@ -147,7 +159,7 @@ By default, the \<books> tag is not considered as a list
 ```java
 public String convertXmlToJson(String xml) {
     XmlToJson xmlToJson = new XmlToJson.Builder(xml)
-        .forceListForPath("/books")
+        .forceList("/books")
         .build();
     JSONObject jsonObject = xmlToJson.toJson();
     return jsonObject.toString();
@@ -186,7 +198,7 @@ Add the libary dependency to your **APP** build.gradle file
 
 ```
 dependencies {
-    compile 'com.github.smart-fun:XmlToJson:1.0.0'    // add this line
+    compile 'com.github.smart-fun:XmlToJson:1.0.1'    // add this line
 }
 ```
 

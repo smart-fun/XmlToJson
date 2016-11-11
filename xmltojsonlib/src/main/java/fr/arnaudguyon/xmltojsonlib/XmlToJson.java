@@ -35,7 +35,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 /**
- * Created by Arnaud Guyon on 08.11.16.
  * Converts XML to JSON
  */
 
@@ -80,7 +79,7 @@ public class XmlToJson {
          * @param path Path for the tag, with format like "/parentTag/childTag/tagAsAList"
          * @return the Builder
          */
-        public Builder forceListForPath(@NonNull String path) {
+        public Builder forceList(@NonNull String path) {
             mForceListPaths.add(path);
             return this;
         }
@@ -91,7 +90,7 @@ public class XmlToJson {
          * @param replacementName Name used for replacement (childTagAttribute becomes replacementName)
          * @return the Builder
          */
-        public Builder setAttributeNameReplacement(@NonNull String attributePath, @NonNull String replacementName) {
+        public Builder setAttributeName(@NonNull String attributePath, @NonNull String replacementName) {
             mAttributeNameReplacements.put(attributePath, replacementName);
             return this;
         }
@@ -104,7 +103,7 @@ public class XmlToJson {
          * @param replacementName Name used in place of the default "content" key
          * @return
          */
-        public Builder setContentNameReplacement(@NonNull String contentPath, @NonNull String replacementName) {
+        public Builder setContentName(@NonNull String contentPath, @NonNull String replacementName) {
             mContentNameReplacements.put(contentPath, replacementName);
             return this;
         }
