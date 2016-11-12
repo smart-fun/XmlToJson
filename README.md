@@ -1,9 +1,12 @@
-# XML to JSON for Android
-**XML to JSON** is an Android Studio Library which converts XML to JSON. It takes a String or InputStream as the source for the XML and creates a JSONObject that can be directly manipulated or converted into a String.
+# XML to JSON for Android #
 
-It is fully configurable so that you can change for example attribute names, see the examples below.
+**XML to JSON** is an Android Studio Library which converts XML to JSON. It takes a **String or InputStream** as the source for the XML and creates a **JSONObject** that can be directly manipulated or converted into a String.
 
-## Examples of use
+It is fully **configurable** so that you can change for example attribute names.
+
+It is easy to integrate with **gradle**.
+
+## Examples of use ##
 
 ### Basic usage ###
 
@@ -55,6 +58,7 @@ Instead of converting a XML String, you can convert a InputStream, coming from a
 ```
 
 ### Custom Content names ###
+
 By default, the content of a XML Tag is converted into a key called "content". This name can be changed with a custom one, using **Builder.setContentName**(String contentPath, String replacementName). You can change as many content names as you want.
 
 ```java
@@ -181,7 +185,7 @@ Now \<books> is considered as a list:
 }
 ```
 
-## Installation with gradle
+## Installation with gradle ##
 
 Add the following maven{} line to your **PROJECT** build.gradle file
 
@@ -202,7 +206,7 @@ dependencies {
 }
 ```
 
-## License
+## License ##
 
 Copyright 2016 Arnaud Guyon
 
