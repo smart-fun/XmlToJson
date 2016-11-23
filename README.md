@@ -30,15 +30,17 @@ String formatted = xmlToJson.toFormattedString();
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
-<books>
+<library>
+    <owner>John Doe</owner>
     <book id="007">James Bond</book>
     <book id="000">Book for the dummies</book>
-</books>
+</library>
 ```
 
 ```json
 {  
-   "books":{  
+   "library":{
+      "owner": "John Doe",
       "book":[  
          {  
             "id":7,
@@ -72,24 +74,23 @@ By default, the content of a XML Tag is converted into a key called "content". T
 ```java
 public String convertXmlToJson(String xml) {
     XmlToJson xmlToJson = new XmlToJson.Builder(xml)
-        .setContentName("/books/book", "title")
+        .setContentName("/library/book", "title")
         .build();
-    JSONObject jsonObject = xmlToJson.toJson();
-    return jsonObject.toString();
+    return xmlToJson.toString();
 }
 ```
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
-<books>
+<library>
     <book id="007">James Bond</book>
     <book id="000">Book for the dummies</book>
-</books>
+</library>
 ```
 
 ```json
 {  
-   "books":{  
+   "library":{  
       "book":[  
          {  
             "id":7,
@@ -112,24 +113,23 @@ Attributes are converted into key / values in the JSON. The attribute names may 
 ```java
 public String convertXmlToJson(String xml) {
     XmlToJson xmlToJson = new XmlToJson.Builder(xml)
-        . Builder.setAttributeName("/books/book/id", "code")
+        .setAttributeName("/library/book/id", "code")
         .build();
-    JSONObject jsonObject = xmlToJson.toJson();
-    return jsonObject.toString();
+    return xmlToJson.toString();
 }
 ```
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
-<books>
+<library>
     <book id="007">James Bond</book>
     <book id="000">Book for the dummies</book>
-</books>
+</library>
 ```
 
 ```json
 {  
-   "books":{  
+   "library":{  
       "book":[  
          {  
             "code":7,
@@ -146,20 +146,20 @@ public String convertXmlToJson(String xml) {
 
 ### Forcing a Tag to be a list ###
 
-In a XML hierarchy, an entry can have children. For example, \<books> has 2 entries \<book>. In case there is only one book, there is no way to know that Books is a list. But you can force it using **Builder.forceList**(String path).
+In a XML hierarchy, an entry can have children. For example, \<library> has 2 entries \<book>. In case there is only one book, there is no way to know that Book is a list. But you can force it using **Builder.forceList**(String path).
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
-<books>
+<library>
     <book id="007">James Bond</book>
-</books>
+</library>
 ```
 
-By default, the \<books> tag is not considered as a list
+By default, the \<book> tag is NOT considered as a list
 
 ```json
 {  
-   "books":{  
+   "library":{  
       "book":{  
          "id":7,
          "content":"James Bond"
@@ -171,18 +171,17 @@ By default, the \<books> tag is not considered as a list
 ```java
 public String convertXmlToJson(String xml) {
     XmlToJson xmlToJson = new XmlToJson.Builder(xml)
-        .forceList("/books")
+        .forceList("/library/book")
         .build();
-    JSONObject jsonObject = xmlToJson.toJson();
-    return jsonObject.toString();
+    return xmlToJson.toString();
 }
 ```
 
-Now \<books> is considered as a list:
+Now \<book> is considered as a list:
 
 ```json
 {  
-   "books":{  
+   "library":{  
       "book":[  
          {  
             "id":7,
@@ -210,7 +209,7 @@ Add the libary dependency to your **APP** build.gradle file
 
 ```
 dependencies {
-    compile 'com.github.smart-fun:XmlToJson:1.1.0'    // add this line
+    compile 'com.github.smart-fun:XmlToJson:1.1.1'    // add this line
 }
 ```
 

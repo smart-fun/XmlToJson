@@ -7,8 +7,8 @@ android {
         applicationId "fr.arnaudguyon.xmltojson"
         minSdkVersion 9
         targetSdkVersion 24
-        versionCode 3
-        versionName "1.1.0"
+        versionCode 4
+        versionName "1.1.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
