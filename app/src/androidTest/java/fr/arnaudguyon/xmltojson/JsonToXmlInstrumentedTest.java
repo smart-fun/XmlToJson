@@ -51,7 +51,7 @@ public class JsonToXmlInstrumentedTest {
         inputStream.close();
         Log.i("Unit Test", json);
 
-        String attended = "{\"xliff\":{\"xmlns\":\"urn:oasis:names:tc:xliff:document:1.2\",\"version\":\"1.2\",\"file\":{\"original\":\"global\",\"datatype\":\"plaintext\",\"source-language\":\"en\",\"target-language\":\"de\",\"body\":{\"trans-unit\":[{\"id\":\"address_addButton\",\"source\":{\"content\":\"Add a new Address\",\"xml:lang\":\"en\"},\"target\":{\"content\":\"NEUE ADRESSE HINZUFÜGEN\",\"xml:lang\":\"de\"},\"note\":\"create address button\"},{\"id\":\"address_createButton\",\"source\":{\"content\":\"Create Address\",\"xml:lang\":\"en\"},\"target\":{\"content\":\"ADRESSE ERSTELLEN\",\"xml:lang\":\"de\"},\"note\":\"add address button\"}]}}}}";
+        String attended = "{\"xliff\":{\"xmlns\":\"urn:oasis:names:tc:xliff:document:1.2\",\"version\":1.2,\"file\":{\"original\":\"global\",\"datatype\":\"plaintext\",\"source-language\":\"en\",\"target-language\":\"de\",\"body\":{\"trans-unit\":[{\"id\":\"address_addButton\",\"source\":{\"content\":\"Add a new Address\",\"xml:lang\":\"en\"},\"target\":{\"content\":\"NEUE ADRESSE HINZUFÜGEN\",\"xml:lang\":\"de\"},\"note\":\"create address button\"},{\"id\":\"address_createButton\",\"source\":{\"content\":\"Create Address\",\"xml:lang\":\"en\"},\"target\":{\"content\":\"ADRESSE ERSTELLEN\",\"xml:lang\":\"de\"},\"note\":\"add address button\"}]}}}}";
         assertEquals(attended, json);
     }
 
@@ -67,7 +67,7 @@ public class JsonToXmlInstrumentedTest {
         ims.close();
         Log.i("Unit Test", json);
 
-        String attended = "{\"resources\":{\"string\":[{\"content\":\"XML to JSON App\",\"translatable\":\"false\",\"name\":\"app_name\"},{\"content\":\"hello %1$s\",\"translatable\":\"true\",\"name\":\"helloUser\"},{\"content\":\"Quit\",\"name\":\"quit_button\"}]}}";
+        String attended = "{\"resources\":{\"string\":[{\"content\":\"XML to JSON App\",\"translatable\":false,\"name\":\"app_name\"},{\"content\":\"hello %1$s\",\"translatable\":true,\"name\":\"helloUser\"},{\"content\":\"Quit\",\"name\":\"quit_button\"}]}}";
         assertEquals(attended, json);
     }
 
@@ -80,7 +80,7 @@ public class JsonToXmlInstrumentedTest {
         String json = xmlToJson.toJson().toString();
         Log.i("Unit Test", json);
 
-        String attended = "{\"resources\":{\"string\":[{\"content\":\"XML to JSON App\",\"translatable\":\"false\",\"name\":\"app_name\"},{\"content\":\"hello %1$s\",\"translatable\":\"true\",\"name\":\"helloUser\"},{\"content\":\"Quit\",\"name\":\"quit_button\"}]}}";
+        String attended = "{\"resources\":{\"string\":[{\"content\":\"XML to JSON App\",\"translatable\":false,\"name\":\"app_name\"},{\"content\":\"hello %1$s\",\"translatable\":true,\"name\":\"helloUser\"},{\"content\":\"Quit\",\"name\":\"quit_button\"}]}}";
         assertEquals(attended, json);
     }
 
@@ -95,7 +95,7 @@ public class JsonToXmlInstrumentedTest {
         String json = xmlToJson.toJson().toString();
         Log.i("Unit Test", json);
 
-        String attended = "{\"books\":{\"book\":[{\"content\":\"James Bond\",\"attributeReplacement\":\"007\"},{\"content\":\"Book for the dummies\",\"attributeReplacement\":\"000\"}]}}";
+        String attended = "{\"books\":{\"book\":[{\"content\":\"James Bond\",\"attributeReplacement\":7},{\"content\":\"Book for the dummies\",\"attributeReplacement\":0}]}}";
         assertEquals(attended, json);
     }
 
@@ -110,7 +110,7 @@ public class JsonToXmlInstrumentedTest {
         String json = xmlToJson.toJson().toString();
         Log.i("Unit Test", json);
 
-        String attended = "{\"books\":{\"book\":[{\"contentReplacement\":\"James Bond\",\"id\":\"007\"},{\"contentReplacement\":\"Book for the dummies\",\"id\":\"000\"}]}}";
+        String attended = "{\"books\":{\"book\":[{\"contentReplacement\":\"James Bond\",\"id\":7},{\"contentReplacement\":\"Book for the dummies\",\"id\":0}]}}";
         assertEquals(attended, json);
     }
 
@@ -123,7 +123,7 @@ public class JsonToXmlInstrumentedTest {
         String json = xmlToJson.toJson().toString();
         Log.i("Unit Test", json);
 
-        String attended = "{\"books\":{\"book\":{\"content\":\"James Bond\",\"id\":\"007\"}}}";
+        String attended = "{\"books\":{\"book\":{\"content\":\"James Bond\",\"id\":7}}}";
         assertEquals(attended, json);
     }
 
@@ -138,7 +138,7 @@ public class JsonToXmlInstrumentedTest {
         String json = xmlToJson.toJson().toString();
         Log.i("Unit Test", json);
 
-        String attended = "{\"books\":{\"book\":[{\"content\":\"James Bond\",\"id\":\"007\"}]}}";
+        String attended = "{\"books\":{\"book\":[{\"content\":\"James Bond\",\"id\":7}]}}";
         assertEquals(attended, json);
     }
 
