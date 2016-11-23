@@ -36,9 +36,16 @@ public class MainActivity extends AppCompatActivity {
 
         TextView textView = (TextView) findViewById(R.id.jsonTextView);
 
+//        String xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?><books><toto>titi</toto><book id=\"007\">James Bond</book><book id=\"000\">Book for the dummies</book></books>";
+//        XmlToJson xmlToJson = new XmlToJson.Builder(xml).build();
+//        String formatted = xmlToJson.toFormattedString("\t");
+//        textView.setText(formatted);
+
         try {
             InputStream inputStream = getAssets().open("app_example.xml");
-            XmlToJson xmlToJson = new XmlToJson.Builder(inputStream, null).build();
+            XmlToJson xmlToJson = new XmlToJson.Builder(inputStream, null)
+                    .forceList("/container/entry/forcedlist")
+                    .build();
             String formatted = xmlToJson.toFormattedString("\t");
             textView.setText(formatted);
             inputStream.close();

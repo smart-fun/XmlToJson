@@ -4,8 +4,8 @@
     <entry name="just_attribute"/>
     <entry bool="false" name="app_name" number="42">First Entry</entry>
     <entry bool="true" number="32.72">Second Entry</entry>
+    <otherTag>Not in the list</otherTag>
     <entry>
-        <elt id="1"/>
-        <elt id="2"/>
+        <forcedlist id="2"/>
     </entry>
 </container>

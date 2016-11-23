@@ -109,7 +109,7 @@ public class XmlToJson {
          *
          * @param contentPath     Path for the Tag that holds the content, using format like "/parentTag/childTag"
          * @param replacementName Name used in place of the default "content" key
-         * @return
+         * @return the Builder
          */
         public Builder setContentName(@NonNull String contentPath, @NonNull String replacementName) {
             mContentNameReplacements.put(contentPath, replacementName);
@@ -249,33 +249,67 @@ public class XmlToJson {
         }
 
         try {
-            if (tag.isList() || isForcedList(tag)) {
-                JSONArray list = new JSONArray();
-                ArrayList<Tag> children = tag.getChildren();
-                for (Tag child : children) {
-                    list.put(convertTagToJson(child, true));
-                }
-                String childrenNames = tag.getChild(0).getName();
-                json.put(childrenNames, list);
-                return json;
-            } else {
-                ArrayList<Tag> children = tag.getChildren();
-                if (children.size() == 0) {
-                    if (!isListElement) {
-                        putContent(json, tag.getName(), tag.getContent());
-                    }
-                } else {
-                    for (Tag child : children) {
+
+            HashMap<String, ArrayList<Tag>> groups = tag.getGroupedElements(); // groups by tag names so that we can detect lists or single elements
+            for(ArrayList<Tag> group : groups.values()) {
+
+                if (group.size() == 1) {    // element, or list of 1
+                    Tag child = group.get(0);
+                    if (isForcedList(child)) {  // list of 1
+                        JSONArray list = new JSONArray();
+                        list.put(convertTagToJson(child, true));
+                        String childrenNames = tag.getChild(0).getName();
+                        json.put(childrenNames, list);
+//                        return json;
+                    } else {    // stand alone element
                         if (child.hasChildren()) {
                             JSONObject jsonChild = convertTagToJson(child, false);
                             json.put(child.getName(), jsonChild);
                         } else {
                             putContent(json, child.getName(), child.getContent());
                         }
+//                        return json;
                     }
+                } else {    // list
+                    JSONArray list = new JSONArray();
+                    for (Tag child : group) {
+                        list.put(convertTagToJson(child, true));
+                    }
+                    String childrenNames = group.get(0).getName();
+                    json.put(childrenNames, list);
+//                    return json;
                 }
-                return json;
             }
+            return json;
+
+
+//            if (tag.isList() || isForcedList(tag)) {
+//                JSONArray list = new JSONArray();
+//                ArrayList<Tag> children = tag.getChildren();
+//                for (Tag child : children) {
+//                    list.put(convertTagToJson(child, true));
+//                }
+//                String childrenNames = tag.getChild(0).getName();
+//                json.put(childrenNames, list);
+//                return json;
+//            } else {
+//                ArrayList<Tag> children = tag.getChildren();
+//                if (children.size() == 0) {
+//                    if (!isListElement) {
+//                        putContent(json, tag.getName(), tag.getContent());
+//                    }
+//                } else {
+//                    for (Tag child : children) {
+//                        if (child.hasChildren()) {
+//                            JSONObject jsonChild = convertTagToJson(child, false);
+//                            json.put(child.getName(), jsonChild);
+//                        } else {
+//                            putContent(json, child.getName(), child.getContent());
+//                        }
+//                    }
+//                }
+//                return json;
+//            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -355,7 +389,7 @@ public class XmlToJson {
     /**
      * Format the Json with indentation and line breaks.
      * Uses the last intendation pattern used, or the default one (3 spaces)
-     * @return
+     * @return the Builder
      */
     public String toFormattedString() {
         JSONObject jsonObject = (mJsonObject != null) ? mJsonObject : toJson();

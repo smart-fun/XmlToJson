@@ -17,6 +17,7 @@ package fr.arnaudguyon.xmltojsonlib;
  */
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Class used to store XML hierarchy
@@ -82,17 +83,18 @@ public class Tag {
         return null;
     }
 
-    /* package */ boolean isList() {
-        if (mChildren.size() > 1) {
-            String tagName = getChild(0).mName; // All Tags must have the same name
-            for(int i=1; i<mChildren.size(); ++i) {
-                if (!tagName.equals(mChildren.get(i).mName)) {
-                    return false;
-                }
+    /* package */ HashMap<String, ArrayList<Tag>> getGroupedElements() {
+        HashMap<String, ArrayList<Tag>> groups = new HashMap<>();
+        for(Tag child : mChildren) {
+            String key = child.getName();
+            ArrayList<Tag> group = groups.get(key);
+            if (group == null) {
+                group = new ArrayList<>();
+                groups.put(key, group);
             }
-            return true;
+            group.add(child);
         }
-        return false;
+        return groups;
     }
 
     /* package */ String getPath() {
