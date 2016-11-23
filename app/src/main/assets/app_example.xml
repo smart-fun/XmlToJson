@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<container>
+    <entry>Just Content</entry>
+    <entry name="just_attribute"/>
+    <entry bool="false" name="app_name" number="42">First Entry</entry>
+    <entry bool="true" number="32.72">Second Entry</entry>
+    <entry>
+        <elt id="1"/>
+        <elt id="2"/>
+    </entry>
+</container>
