@@ -13,11 +13,19 @@ It is easy to integrate with **gradle**.
 The code to convert a XML String into a JSON String is the following:
 
 ```java
-public String convertXmlToJson(String xml) {
-    XmlToJson xmlToJson = new XmlToJson.Builder(xml).build();
-    JSONObject jsonObject = xmlToJson.toJson();
-    return jsonObject.toString();
-}
+String xml = ...;  // some xml String
+
+XmlToJson xmlToJson = new XmlToJson.Builder(xml).build();
+
+// convert to a JSONObject
+JSONObject jsonObject = xmlToJson.toJson();
+
+// OR convert to a Json String
+String jsonString = xmlToJson.toString();
+
+// OR convert to a formatted Json String (with indent & line breaks)
+String formatted = xmlToJson.toFormattedString();
+
 ```
 
 ```xml
@@ -33,11 +41,11 @@ public String convertXmlToJson(String xml) {
    "books":{  
       "book":[  
          {  
-            "id":"007",
+            "id":7,
             "content":"James Bond"
          },
          {  
-            "id":"000",
+            "id":0,
             "content":"Book for the dummies"
          }
       ]
@@ -53,7 +61,7 @@ Instead of converting a XML String, you can convert a InputStream, coming from a
     AssetManager assetManager = context.getAssets();
     InputStream inputStream = assetManager.open("myFile.xml");
     XmlToJson xmlToJson = new XmlToJson.Builder(inputStream, null).build();
-    String json = xmlToJson.toJson().toString();
+    String json = xmlToJson.toString();
     inputStream.close();
 ```
 
@@ -84,11 +92,11 @@ public String convertXmlToJson(String xml) {
    "books":{  
       "book":[  
          {  
-            "id":"007",
+            "id":7,
             "title":"James Bond"
          },
          {  
-            "id":"000",
+            "id":0,
             "title":"Book for the dummies"
          }
       ]
@@ -124,11 +132,11 @@ public String convertXmlToJson(String xml) {
    "books":{  
       "book":[  
          {  
-            "code":"007",
+            "code":7,
             "content":"James Bond"
          },
          {  
-            "code":"000",
+            "code":0,
             "content":"Book for the dummies"
          }
       ]
@@ -153,7 +161,7 @@ By default, the \<books> tag is not considered as a list
 {  
    "books":{  
       "book":{  
-         "id":"007",
+         "id":7,
          "content":"James Bond"
       }
    }
@@ -177,7 +185,7 @@ Now \<books> is considered as a list:
    "books":{  
       "book":[  
          {  
-            "id":"007",
+            "id":7,
             "content":"James Bond"
          }
       ]
@@ -202,7 +210,7 @@ Add the libary dependency to your **APP** build.gradle file
 
 ```
 dependencies {
-    compile 'com.github.smart-fun:XmlToJson:1.0.1'    // add this line
+    compile 'com.github.smart-fun:XmlToJson:1.1.0'    // add this line
 }
 ```
 
