@@ -141,41 +141,45 @@ public class XmlToJson {
         mForceListPaths = builder.mForceListPaths;
         mAttributeNameReplacements = builder.mAttributeNameReplacements;
         mContentNameReplacements = builder.mContentNameReplacements;
+
+        mJsonObject = convertToJSONObject(); // Build now so that the InputStream can be closed just after
     }
 
     /**
-     * Creates a JSONObject. To convert this object to a json String call object.toString();
      *
-     * @return a JSONObject, or null. Can be empty if the XML is invalid.
+     * @return the JSONObject built from the XML
      */
     public
     @Nullable
     JSONObject toJson() {
-        if (mJsonObject == null) {
-            try {
-                Tag parentTag = new Tag("", "xml");
-
-                XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
-                factory.setNamespaceAware(false);   // tags with namespace are taken as-is ("namespace:tagname")
-                XmlPullParser xpp = factory.newPullParser();
-
-                setInput(xpp);
-
-                int eventType = xpp.getEventType();
-                while (eventType != XmlPullParser.START_DOCUMENT) {
-                    eventType = xpp.next();
-                }
-                readTags(parentTag, xpp);
-
-                unsetInput();
-
-                mJsonObject = convertTagToJson(parentTag, false);  // cache result for future use
-            } catch (XmlPullParserException | IOException e) {
-                e.printStackTrace();
-                return null;
-            }
-        }
         return mJsonObject;
+    }
+
+    private
+    @Nullable
+    JSONObject convertToJSONObject() {
+        try {
+            Tag parentTag = new Tag("", "xml");
+
+            XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
+            factory.setNamespaceAware(false);   // tags with namespace are taken as-is ("namespace:tagname")
+            XmlPullParser xpp = factory.newPullParser();
+
+            setInput(xpp);
+
+            int eventType = xpp.getEventType();
+            while (eventType != XmlPullParser.START_DOCUMENT) {
+                eventType = xpp.next();
+            }
+            readTags(parentTag, xpp);
+
+            unsetInput();
+
+            return convertTagToJson(parentTag, false);
+        } catch (XmlPullParserException | IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     private void setInput(XmlPullParser xpp) {
@@ -260,7 +264,6 @@ public class XmlToJson {
                         list.put(convertTagToJson(child, true));
                         String childrenNames = tag.getChild(0).getName();
                         json.put(childrenNames, list);
-//                        return json;
                     } else {    // stand alone element
                         if (child.hasChildren()) {
                             JSONObject jsonChild = convertTagToJson(child, false);
@@ -268,7 +271,6 @@ public class XmlToJson {
                         } else {
                             putContent(json, child.getName(), child.getContent());
                         }
-//                        return json;
                     }
                 } else {    // list
                     JSONArray list = new JSONArray();
@@ -277,7 +279,6 @@ public class XmlToJson {
                     }
                     String childrenNames = group.get(0).getName();
                     json.put(childrenNames, list);
-//                    return json;
                 }
             }
             return json;
@@ -364,9 +365,8 @@ public class XmlToJson {
 
     @Override
     public String toString() {
-        JSONObject jsonObject = (mJsonObject != null) ? mJsonObject : toJson();
-        if (jsonObject != null) {
-            return jsonObject.toString();
+        if (mJsonObject != null) {
+            return mJsonObject.toString();
         }
         return null;
     }
@@ -392,12 +392,11 @@ public class XmlToJson {
      * @return the Builder
      */
     public String toFormattedString() {
-        JSONObject jsonObject = (mJsonObject != null) ? mJsonObject : toJson();
-        if (jsonObject != null) {
+        if (mJsonObject != null) {
             String indent = "";
             StringBuilder builder = new StringBuilder();
             builder.append("{\n");
-            format(jsonObject, builder, indent);
+            format(mJsonObject, builder, indent);
             builder.append("}\n");
             return builder.toString();
         }
