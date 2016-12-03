@@ -78,7 +78,8 @@ public class MainActivity extends AppCompatActivity {
                         .forceAttribute("/container/entry/forcedlist/id")
                         .forceContent("/container/entry/content")
                         .build();
-                String result = jsonToXml.toString();
+//                String result = jsonToXml.toString();
+                String result = jsonToXml.toFormattedString(4);
                 TextView xmlTextView = (TextView) findViewById(R.id.xmlTextView);
                 xmlTextView.setText(result);
             } catch (JSONException e) {

@@ -1,5 +1,6 @@
 package fr.arnaudguyon.xmltojsonlib;
 
+import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.util.Xml;
 
@@ -8,9 +9,17 @@ import org.json.JSONObject;
 import org.xmlpull.v1.XmlSerializer;
 
 import java.io.IOException;
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.HashSet;
 import java.util.Iterator;
+
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
 
 /**
  * Created by Arnaud Guyon on 03/12/2016.
@@ -23,6 +32,8 @@ public class JsonToXml {
         private JSONObject mJson;
         private HashSet<String> mForcedAttributes = new HashSet<>();
         private HashSet<String> mForcedContent = new HashSet<>();
+
+        // TODO: from InputStream
 
         public Builder(@NonNull JSONObject jsonObject) {
             mJson = jsonObject;
@@ -60,7 +71,27 @@ public class JsonToXml {
         prepareObject(mNode, mJson);
         return nodeToXML(mNode);
     }
-    // TODO: toFormattedString
+
+    public String toFormattedString() {
+        return toFormattedString(3);
+    }
+
+    public String toFormattedString(@IntRange(from = 0) int indent) {
+        String input = toString();
+        try {
+            Source xmlInput = new StreamSource(new StringReader(input));
+            StringWriter stringWriter = new StringWriter();
+            StreamResult xmlOutput = new StreamResult(stringWriter);
+            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            Transformer transformer = transformerFactory.newTransformer();
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "" + indent);
+            transformer.transform(xmlInput, xmlOutput);
+            return xmlOutput.getWriter().toString();
+        } catch (Exception e) {
+            throw new RuntimeException(e); // TODO: do my own
+        }
+    }
 
     private String nodeToXML(Node node) {
         XmlSerializer serializer = Xml.newSerializer();
