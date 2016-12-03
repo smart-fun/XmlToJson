@@ -21,38 +21,46 @@ public class JsonToXml {
     public static class Builder {
 
         private JSONObject mJson;
-        private HashSet<String> mAttributes = new HashSet<>();
+        private HashSet<String> mForcedAttributes = new HashSet<>();
+        private HashSet<String> mForcedContent = new HashSet<>();
 
         public Builder(@NonNull JSONObject jsonObject) {
             mJson = jsonObject;
         }
 
-        public Builder addAttribute(String path) {
-            mAttributes.add(path);
+        public Builder forceAttribute(String path) {
+            mForcedAttributes.add(path);
+            return this;
+        }
+
+        public Builder forceContent(String path) {
+            mForcedContent.add(path);
             return this;
         }
 
         public JsonToXml build() {
-            return new JsonToXml(mJson, mAttributes);
+            return new JsonToXml(mJson, mForcedAttributes, mForcedContent);
         }
     }
 
     private JSONObject mJson;
     private Node mNode;
-    private HashSet<String> mAttributes;
+    private HashSet<String> mForcedAttributes;
+    private HashSet<String> mForcedContent;
 
-    private JsonToXml(@NonNull JSONObject jsonObject, @NonNull HashSet<String> attributes) {
+    private JsonToXml(@NonNull JSONObject jsonObject, @NonNull HashSet<String> forcedAttributes, HashSet<String> forcedContent) {
         mJson = jsonObject;
-        mAttributes = attributes;
+        mForcedAttributes = forcedAttributes;
+        mForcedContent = forcedContent;
     }
 
     @Override
     public String toString() {
-        //return serialize(mJson);
         mNode = new Node(null, "");
         prepareObject(mNode, mJson);
         return nodeToXML(mNode);
     }
+    // TODO: toFormattedString
 
     private String nodeToXML(Node node) {
         XmlSerializer serializer = Xml.newSerializer();
@@ -111,7 +119,7 @@ public class JsonToXml {
                     String value = object.toString();
                     if (isAttribute(path)) {
                         node.addAttribute(key, value);
-                    } else if (isContent(path, key) ) {
+                    } else if (isContent(path) ) {
                         node.setContent(value);
                     } else {
                         Node subNode = new Node(key, node.mPath);
@@ -147,10 +155,10 @@ public class JsonToXml {
     }
 
     private boolean isAttribute(String path) {
-        return mAttributes.contains(path);
+        return mForcedAttributes.contains(path);
     }
 
-    private boolean isContent(String path, String key) {
-        return false;    // TODO: exception with content
+    private boolean isContent(String path) {
+        return mForcedContent.contains(path);
     }
 }

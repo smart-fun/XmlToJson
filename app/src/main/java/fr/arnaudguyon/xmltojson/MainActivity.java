@@ -38,8 +38,6 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.main_activity);
 
-        TextView textView = (TextView) findViewById(R.id.jsonTextView);
-
 //        String xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?><books><toto>titi</toto><book id=\"007\">James Bond</book><book id=\"000\">Book for the dummies</book></books>";
 //        XmlToJson xmlToJson = new XmlToJson.Builder(xml).build();
 //        String formatted = xmlToJson.toFormattedString("\t");
@@ -51,7 +49,8 @@ public class MainActivity extends AppCompatActivity {
                     .forceList("/container/entry/forcedlist")
                     .build();
             String formatted = xmlToJson.toFormattedString("\t");
-            textView.setText(formatted);
+            TextView jsonTextView = (TextView) findViewById(R.id.jsonTextView);
+            jsonTextView.setText(formatted);
             inputStream.close();
 
 //            String testXML = "{\n" +
@@ -73,12 +72,15 @@ public class MainActivity extends AppCompatActivity {
             try {
                 JSONObject jsonObject = new JSONObject(formatted);
                 JsonToXml jsonToXml = new JsonToXml.Builder(jsonObject)
-                        .addAttribute("/container/entry/bool")
-                        .addAttribute("/container/entry/name")
-                        .addAttribute("/container/entry/number")
+                        .forceAttribute("/container/entry/bool")
+                        .forceAttribute("/container/entry/name")
+                        .forceAttribute("/container/entry/number")
+                        .forceAttribute("/container/entry/forcedlist/id")
+                        .forceContent("/container/entry/content")
                         .build();
                 String result = jsonToXml.toString();
-                textView.setText(result);
+                TextView xmlTextView = (TextView) findViewById(R.id.xmlTextView);
+                xmlTextView.setText(result);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
