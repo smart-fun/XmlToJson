@@ -242,7 +242,6 @@ Here is a JSON example
         "id": 124,
         "name": "John Doe"
     }
-    
 }
 ```
 
@@ -313,7 +312,7 @@ Add the libary dependency to your **APP** build.gradle file
 
 ```
 dependencies {
-    compile 'com.github.smart-fun:XmlToJson:1.1.1'    // add this line
+    compile 'com.github.smart-fun:XmlToJson:1.2.0'    // add this line
 }
 ```
 
