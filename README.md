@@ -1,32 +1,45 @@
 # XML to JSON for Android #
 
-**XML to JSON** is an Android Studio Library which converts XML to JSON. It takes a **String or InputStream** as the source for the XML and creates a **JSONObject** that can be directly manipulated or converted into a String.
+XML to JSON is an Android Studio Library which converts easily **XML to JSON** and **JSON to XML**.
 
 It is fully **configurable** so that you can change for example attribute names.
 
 It is easy to integrate with **gradle**.
 
-## Examples of use ##
+## XML to JSON ##
 
 ### Basic usage ###
 
-The code to convert a XML String into a JSON String is the following:
+There are 2 ways to create a **XmlToJson** object: from a **String** or from an **InputStream**.
 
 ```java
-String xml = ...;  // some xml String
-
-XmlToJson xmlToJson = new XmlToJson.Builder(xml).build();
-
-// convert to a JSONObject
-JSONObject jsonObject = xmlToJson.toJson();
-
-// OR convert to a Json String
-String jsonString = xmlToJson.toString();
-
-// OR convert to a formatted Json String (with indent & line breaks)
-String formatted = xmlToJson.toFormattedString();
-
+    String xmlString;  // some XML String previously created
+    XmlToJson xmlToJson = new XmlToJson.Builder(xmlString).build();
 ```
+
+OR
+
+```java
+    AssetManager assetManager = context.getAssets();
+    InputStream inputStream = assetManager.open("myFile.xml");
+    XmlToJson xmlToJson = new XmlToJson.Builder(inputStream, null).build();
+    inputStream.close();
+```
+
+Then you can convert it to a **JSONObject**, a **String**, or a **Formatted String** (with indentation and line breaks).
+
+```java
+    // convert to a JSONObject
+    JSONObject jsonObject = xmlToJson.toJson();
+
+    // convert to a Json String
+    String jsonString = xmlToJson.toString();
+
+    // convert to a formatted Json String
+    String formatted = xmlToJson.toFormattedString();
+```
+
+Thats' it. Here is an example of XML...
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
@@ -36,6 +49,8 @@ String formatted = xmlToJson.toFormattedString();
     <book id="000">Book for the dummies</book>
 </library>
 ```
+
+... converted into JSON
 
 ```json
 {  
@@ -53,18 +68,6 @@ String formatted = xmlToJson.toFormattedString();
       ]
    }
 }
-```
-
-### Use with an InputStream ###
-
-Instead of converting a XML String, you can convert a InputStream, coming from a File for example.
-
-```java
-    AssetManager assetManager = context.getAssets();
-    InputStream inputStream = assetManager.open("myFile.xml");
-    XmlToJson xmlToJson = new XmlToJson.Builder(inputStream, null).build();
-    String json = xmlToJson.toString();
-    inputStream.close();
 ```
 
 ### Custom Content names ###
@@ -144,7 +147,7 @@ public String convertXmlToJson(String xml) {
 }
 ```
 
-### Forcing a Tag to be a list ###
+### Force a Tag to be a list ###
 
 In a XML hierarchy, an entry can have children. For example, \<library> has 2 entries \<book>. In case there is only one book, there is no way to know that Book is a list. But you can force it using **Builder.forceList**(String path).
 
@@ -191,6 +194,107 @@ Now \<book> is considered as a list:
    }
 }
 ```
+
+## XML to JSON ##
+
+### Basic usage ###
+
+There are several ways to create a **JsonToXml** object: from a Json **String**, a **JSONObject** or from an **InputStream**.
+
+```java
+    JSONObject jsonObject; // some JSONObject previously created
+    JsonToXml jsonToXml = new JsonToXml.Builder(jsonObject).build();
+```
+
+OR
+
+```java
+    String jsonString; // some JSON String previously created
+    JsonToXml jsonToXml = new JsonToXml.Builder(jsonString).build();
+```
+
+OR
+
+```java
+    AssetManager assetManager = context.getAssets();
+    InputStream inputStream = assetManager.open("myFile.json");
+    JsonToXml jsonToXml = new JsonToXml.Builder(inputStream).build();
+    inputStream.close();
+```
+
+Then you can convert it to a XML String or a XML Formatted String (with indentation and line breaks)
+
+```java
+
+    // Converts to a simple XML String
+    String xmlString = jsonToXml.toString();
+
+    // Converts to a formatted XML String
+    int indentationSize = 3;
+    String formattedXml = jsonToXml.toFormattedString(indentationSize);
+```
+
+Here is a JSON example
+
+```json
+{
+    "owner": {
+        "id": 124,
+        "name": "John Doe"
+    }
+    
+}
+```
+
+which is converted into XML
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<owner>
+    <id>124</id>
+    <name>John Doe</name>
+</owner>
+```
+
+
+### Force a TAG to be an parent Attribute ###
+
+You may want to use XML Attributes instead of TAG content. You can do this by using the **forceAttribute** method. You need to specify the Path to the TAG.
+
+```java
+    JsonToXml jsonToXml = new JsonToXml.Builder(jsonObject)
+            .forceAttribute("/owner/id")
+            .build();
+```
+
+The result becomes
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<owner id="124">
+    <name>John Doe</name>
+</owner>
+```
+
+### Force a TAG to be a parent Content ###
+
+When a Tag has only one child, you may want that child to be the Content for its parent. You can use the **forceContent** method to achieve this.
+
+```java
+    JsonToXml jsonToXml = new JsonToXml.Builder(jsonObject)
+            .forceAttribute("/owner/id")
+            .forceContent("/owner/name")
+            .build();
+```
+
+The result becomes
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<owner id="124">John Doe</owner>
+```
+
+which is very compact :)
 
 ## Installation with gradle ##
 
