@@ -21,9 +21,13 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.io.InputStream;
 
+import fr.arnaudguyon.xmltojsonlib.JsonToXml;
 import fr.arnaudguyon.xmltojsonlib.XmlToJson;
 
 public class MainActivity extends AppCompatActivity {
@@ -49,9 +53,37 @@ public class MainActivity extends AppCompatActivity {
             String formatted = xmlToJson.toFormattedString("\t");
             textView.setText(formatted);
             inputStream.close();
+
+//            String testXML = "{\n" +
+//                    "\"hello\": \"world\",\n" +
+//                    "\"this\" : \"is\",\n" +
+//                    "\"me\": \"ok\"\n" +
+//                    "}";
+
+//            String testXML = "{\n" +
+//                    "\"hello\": \"world\",\n" +
+//                    "\"this\" : \"is\",\n" +
+//                    "\"object\" : {\n" +
+//                    "\"a\":true,\n" +
+//                    "\"b\": [{\"one\":1},{\"two\":2}],\n" +
+//                    "\"c\": [1,2,3,4]\n" +
+//                    "}\n" +
+//                    "}";
+
+            try {
+                JSONObject jsonObject = new JSONObject(formatted);
+                JsonToXml jsonToXml = new JsonToXml.Builder(jsonObject).build();
+                String result = jsonToXml.toString();
+                textView.setText(result);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+;
 
     }
 }
