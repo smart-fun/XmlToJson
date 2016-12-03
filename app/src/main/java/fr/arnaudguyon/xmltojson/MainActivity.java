@@ -72,7 +72,11 @@ public class MainActivity extends AppCompatActivity {
 
             try {
                 JSONObject jsonObject = new JSONObject(formatted);
-                JsonToXml jsonToXml = new JsonToXml.Builder(jsonObject).build();
+                JsonToXml jsonToXml = new JsonToXml.Builder(jsonObject)
+                        .addAttribute("/container/entry/bool")
+                        .addAttribute("/container/entry/name")
+                        .addAttribute("/container/entry/number")
+                        .build();
                 String result = jsonToXml.toString();
                 textView.setText(result);
             } catch (JSONException e) {

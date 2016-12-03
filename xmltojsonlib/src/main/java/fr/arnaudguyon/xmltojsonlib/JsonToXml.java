@@ -9,6 +9,7 @@ import org.xmlpull.v1.XmlSerializer;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.HashSet;
 import java.util.Iterator;
 
 /**
@@ -20,21 +21,29 @@ public class JsonToXml {
     public static class Builder {
 
         private JSONObject mJson;
+        private HashSet<String> mAttributes = new HashSet<>();
 
         public Builder(@NonNull JSONObject jsonObject) {
             mJson = jsonObject;
         }
 
+        public Builder addAttribute(String path) {
+            mAttributes.add(path);
+            return this;
+        }
+
         public JsonToXml build() {
-            return new JsonToXml(mJson);
+            return new JsonToXml(mJson, mAttributes);
         }
     }
 
     private JSONObject mJson;
     private Node mNode;
+    private HashSet<String> mAttributes;
 
-    private JsonToXml(@NonNull JSONObject jsonObject) {
+    private JsonToXml(@NonNull JSONObject jsonObject, @NonNull HashSet<String> attributes) {
         mJson = jsonObject;
+        mAttributes = attributes;
     }
 
     @Override
@@ -100,7 +109,7 @@ public class JsonToXml {
                 } else {
                     String path = node.mPath + "/" + key;
                     String value = object.toString();
-                    if (isAttribute(path, key)) {
+                    if (isAttribute(path)) {
                         node.addAttribute(key, value);
                     } else if (isContent(path, key) ) {
                         node.setContent(value);
@@ -137,8 +146,8 @@ public class JsonToXml {
         }
     }
 
-    private boolean isAttribute(String path, String key) {
-        return false;    // TODO: exception with content
+    private boolean isAttribute(String path) {
+        return mAttributes.contains(path);
     }
 
     private boolean isContent(String path, String key) {
