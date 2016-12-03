@@ -119,7 +119,7 @@ public class XmlToJson {
         /**
          * Creates the XmlToJson object
          *
-         * @return a XmlToJson object
+         * @return a XmlToJson instance
          */
         public XmlToJson build() {
             return new XmlToJson(this);

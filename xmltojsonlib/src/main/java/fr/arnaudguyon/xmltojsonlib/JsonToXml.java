@@ -1,3 +1,18 @@
+/*
+    Copyright 2016 Arnaud Guyon
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+ */
 package fr.arnaudguyon.xmltojsonlib;
 
 import android.support.annotation.IntRange;
@@ -5,10 +20,12 @@ import android.support.annotation.NonNull;
 import android.util.Xml;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.xmlpull.v1.XmlSerializer;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.HashSet;
@@ -22,10 +39,12 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 /**
- * Created by Arnaud Guyon on 03/12/2016.
+ * Converts JSON to XML
  */
 
 public class JsonToXml {
+
+    private static final int DEFAULT_INDENTATION = 3;
 
     public static class Builder {
 
@@ -33,29 +52,64 @@ public class JsonToXml {
         private HashSet<String> mForcedAttributes = new HashSet<>();
         private HashSet<String> mForcedContent = new HashSet<>();
 
-        // TODO: from InputStream
-
+        /**
+         * Constructor
+         * @param jsonObject a JSON object
+         */
         public Builder(@NonNull JSONObject jsonObject) {
             mJson = jsonObject;
         }
 
+        /**
+         * Constructor
+         * @param inputStream InputStream containing the JSON
+         */
+        public Builder(@NonNull InputStream inputStream) {
+            this(FileReader.readFileFromInputStream(inputStream));
+        }
+
+        /**
+         * Constructor
+         * @param jsonString String containing the JSON
+         */
+        public Builder(String jsonString) {
+            try {
+                mJson = new JSONObject(jsonString);
+            } catch (JSONException exception) {
+                exception.printStackTrace();
+            }
+        }
+
+        /**
+         * Force a TAG to be an attribute of the parent TAG
+         * @param path Path for the attribute, using format like "/parentTag/childTag/childTagAttribute"
+         * @return the Builder
+         */
         public Builder forceAttribute(String path) {
             mForcedAttributes.add(path);
             return this;
         }
 
+        /**
+         * Force a TAG to be the content of its parent TAG
+         * @param path Path for the content, using format like "/parentTag/contentTag"
+         * @return the Builder
+         */
         public Builder forceContent(String path) {
             mForcedContent.add(path);
             return this;
         }
 
+        /**
+         * Creates the JsonToXml object
+         * @return a JsonToXml instance
+         */
         public JsonToXml build() {
             return new JsonToXml(mJson, mForcedAttributes, mForcedContent);
         }
     }
 
     private JSONObject mJson;
-    private Node mNode;
     private HashSet<String> mForcedAttributes;
     private HashSet<String> mForcedContent;
 
@@ -65,17 +119,30 @@ public class JsonToXml {
         mForcedContent = forcedContent;
     }
 
+    /**
+     *
+     * @return the XML
+     */
     @Override
     public String toString() {
-        mNode = new Node(null, "");
-        prepareObject(mNode, mJson);
-        return nodeToXML(mNode);
+        Node rootNode = new Node(null, "");
+        prepareObject(rootNode, mJson);
+        return nodeToXML(rootNode);
     }
 
+    /**
+     *
+     * @return the formatted XML with a default indent (3 spaces)
+     */
     public String toFormattedString() {
-        return toFormattedString(3);
+        return toFormattedString(DEFAULT_INDENTATION);
     }
 
+    /**
+     *
+     * @param indent size of the indent (number of spaces)
+     * @return the formatted XML
+     */
     public String toFormattedString(@IntRange(from = 0) int indent) {
         String input = toString();
         try {
@@ -110,23 +177,25 @@ public class JsonToXml {
     }
 
     private void nodeToXml(XmlSerializer serializer, Node node) throws IOException {
-        if (node.mName != null) {
-            serializer.startTag("", node.mName);
+        String nodeName = node.getName();
+        if (nodeName != null) {
+            serializer.startTag("", nodeName);
 
-            for (Node.Attribute attribute : node.mAttributes) {
+            for (Node.Attribute attribute : node.getAttributes()) {
                 serializer.attribute("", attribute.mKey, attribute.mValue);
             }
-            if (node.mContent != null) {
-                serializer.text(node.mContent);
+            String nodeContent = node.getContent();
+            if (nodeContent != null) {
+                serializer.text(nodeContent);
             }
         }
 
-        for (Node subNode : node.mChildren) {
+        for (Node subNode : node.getChildren()) {
             nodeToXml(serializer, subNode);
         }
 
-        if (node.mName != null) {
-            serializer.endTag("", node.mName);
+        if (nodeName != null) {
+            serializer.endTag("", nodeName);
         }
     }
 
@@ -138,7 +207,7 @@ public class JsonToXml {
             if (object != null) {
                 if (object instanceof JSONObject) {
                     JSONObject subObject = (JSONObject) object;
-                    String path = node.mPath + "/" + key;
+                    String path = node.getPath() + "/" + key;
                     Node subNode = new Node(key, path);
                     node.addChild(subNode);
                     prepareObject(subNode, subObject);
@@ -146,15 +215,15 @@ public class JsonToXml {
                     JSONArray array = (JSONArray) object;
                     prepareArray(node, key, array);
                 } else {
-                    String path = node.mPath + "/" + key;
+                    String path = node.getPath() + "/" + key;
                     String value = object.toString();
                     if (isAttribute(path)) {
                         node.addAttribute(key, value);
                     } else if (isContent(path) ) {
                         node.setContent(value);
                     } else {
-                        Node subNode = new Node(key, node.mPath);
-                        subNode.mContent = value;
+                        Node subNode = new Node(key, node.getPath());
+                        subNode.setContent(value);
                         node.addChild(subNode);
                     }
                 }
@@ -164,7 +233,7 @@ public class JsonToXml {
 
     private void prepareArray(Node node, String key, JSONArray array) {
         int count = array.length();
-        String path = node.mPath + "/" + key;
+        String path = node.getPath() + "/" + key;
         for (int i = 0; i < count; ++i) {
             Node subNode = new Node(key, path);
             Object object = array.opt(i);
@@ -177,8 +246,8 @@ public class JsonToXml {
                     prepareArray(subNode, key, subArray);
                 } else {
                     String value = object.toString();
-                    subNode.mName = key;
-                    subNode.mContent = value;
+                    subNode.setName(key);
+                    subNode.setContent(value);
                 }
             }
             node.addChild(subNode);
