@@ -31,6 +31,10 @@ import fr.arnaudguyon.xmltojsonlib.XmlToJson;
 
 import static org.junit.Assert.assertEquals;
 
+// TODO: check between Mac & PC as the Tag order seem to vary
+// TODO: add tests for Formatted String
+// TODO: add Unit Tests for JSON to XML
+
 /**
  * Instrumentation test, which will execute on an Android device.
  *
@@ -47,8 +51,8 @@ public class JsonToXmlInstrumentedTest {
         AssetManager assetManager = context.getAssets();
         InputStream inputStream = assetManager.open("texts.xliff");
         XmlToJson xmlToJson = new XmlToJson.Builder(inputStream, null).build();
-        String json = xmlToJson.toJson().toString();
         inputStream.close();
+        String json = xmlToJson.toString();
         Log.i("Unit Test", json);
 
         String attended = "{\"xliff\":{\"xmlns\":\"urn:oasis:names:tc:xliff:document:1.2\",\"file\":{\"body\":{\"trans-unit\":[{\"note\":\"create address button\",\"id\":\"address_addButton\",\"target\":{\"content\":\"NEUE ADRESSE HINZUFÜGEN\",\"xml:lang\":\"de\"},\"source\":{\"content\":\"Add a new Address\",\"xml:lang\":\"en\"}},{\"note\":\"add address button\",\"id\":\"address_createButton\",\"target\":{\"content\":\"ADRESSE ERSTELLEN\",\"xml:lang\":\"de\"},\"source\":{\"content\":\"Create Address\",\"xml:lang\":\"en\"}}]},\"datatype\":\"plaintext\",\"target-language\":\"de\",\"original\":\"global\",\"source-language\":\"en\"},\"version\":1.2}}";
@@ -61,10 +65,10 @@ public class JsonToXmlInstrumentedTest {
         Context context = InstrumentationRegistry.getTargetContext();
 
         AssetManager assetManager = context.getAssets();
-        InputStream ims = assetManager.open("strings_en.xml");
-        XmlToJson xmlToJson = new XmlToJson.Builder(ims, null).build();
-        String json = xmlToJson.toJson().toString();
-        ims.close();
+        InputStream inputStream = assetManager.open("strings_en.xml");
+        XmlToJson xmlToJson = new XmlToJson.Builder(inputStream, null).build();
+        inputStream.close();
+        String json = xmlToJson.toString();
         Log.i("Unit Test", json);
 
         String attended = "{\"resources\":{\"string\":[{\"content\":\"XML to JSON App\",\"name\":\"app_name\",\"translatable\":false},{\"content\":\"hello %1$s\",\"name\":\"helloUser\",\"translatable\":true},{\"content\":\"Quit\",\"name\":\"quit_button\"}]}}";
@@ -77,7 +81,7 @@ public class JsonToXmlInstrumentedTest {
         String xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?><resources><string translatable=\"false\" name=\"app_name\">XML to JSON App</string><string translatable=\"true\" name=\"helloUser\">hello %1$s</string><string name=\"quit_button\">Quit</string></resources>";
 
         XmlToJson xmlToJson = new XmlToJson.Builder(xml).build();
-        String json = xmlToJson.toJson().toString();
+        String json = xmlToJson.toString();
         Log.i("Unit Test", json);
 
         String attended = "{\"resources\":{\"string\":[{\"content\":\"XML to JSON App\",\"name\":\"app_name\",\"translatable\":false},{\"content\":\"hello %1$s\",\"name\":\"helloUser\",\"translatable\":true},{\"content\":\"Quit\",\"name\":\"quit_button\"}]}}";
@@ -92,7 +96,7 @@ public class JsonToXmlInstrumentedTest {
         XmlToJson xmlToJson = new XmlToJson.Builder(xml)
                 .setAttributeName("/books/book/id", "attributeReplacement")
                 .build();
-        String json = xmlToJson.toJson().toString();
+        String json = xmlToJson.toString();
         Log.i("Unit Test", json);
 
         String attended = "{\"books\":{\"book\":[{\"content\":\"James Bond\",\"attributeReplacement\":7},{\"content\":\"Book for the dummies\",\"attributeReplacement\":0}]}}";
@@ -107,7 +111,7 @@ public class JsonToXmlInstrumentedTest {
         XmlToJson xmlToJson = new XmlToJson.Builder(xml)
                 .setContentName("/books/book", "contentReplacement")
                 .build();
-        String json = xmlToJson.toJson().toString();
+        String json = xmlToJson.toString();
         Log.i("Unit Test", json);
 
         String attended = "{\"books\":{\"book\":[{\"contentReplacement\":\"James Bond\",\"id\":7},{\"contentReplacement\":\"Book for the dummies\",\"id\":0}]}}";
@@ -120,7 +124,7 @@ public class JsonToXmlInstrumentedTest {
         String xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?><books><book id=\"007\">James Bond</book></books>";
 
         XmlToJson xmlToJson = new XmlToJson.Builder(xml).build();
-        String json = xmlToJson.toJson().toString();
+        String json = xmlToJson.toString();
         Log.i("Unit Test", json);
 
         String attended = "{\"books\":{\"book\":{\"content\":\"James Bond\",\"id\":7}}}";
@@ -135,7 +139,7 @@ public class JsonToXmlInstrumentedTest {
         XmlToJson xmlToJson = new XmlToJson.Builder(xml)
                 .forceList("/books/book")
                 .build();
-        String json = xmlToJson.toJson().toString();
+        String json = xmlToJson.toString();
         Log.i("Unit Test", json);
 
         String attended = "{\"books\":{\"other\":{\"id\":\"hello\"},\"book\":[{\"content\":\"James Bond\",\"id\":7}]}}";
@@ -146,25 +150,24 @@ public class JsonToXmlInstrumentedTest {
     public void invalidHelloWorldTest() throws Exception {
         String xml = "hello world";
         XmlToJson xmlToJson = new XmlToJson.Builder(xml).build();
-        String json = xmlToJson.toJson().toString();
+        String json = xmlToJson.toString();
         assertEquals("{}", json);
     }
     @Test
     public void invalidUnfinishedTest() throws Exception {
         String xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?><books>";
         XmlToJson xmlToJson = new XmlToJson.Builder(xml).build();
-        String json = xmlToJson.toJson().toString();
+        String json = xmlToJson.toString();
         assertEquals("{}", json);
     }
     @Test
     public void invalidInputStreamTest() throws Exception {
         Context context = InstrumentationRegistry.getTargetContext();
         AssetManager assetManager = context.getAssets();
-        InputStream is = assetManager.open("strings_en.xml");
-        is.close(); // CLOSE INPUT STREAM
-        XmlToJson xmlToJson = new XmlToJson.Builder(is, null).build();
-        String json = xmlToJson.toJson().toString();
+        InputStream inputStream = assetManager.open("strings_en.xml");
+        inputStream.close(); // CLOSE INPUT STREAM
+        XmlToJson xmlToJson = new XmlToJson.Builder(inputStream, null).build();
+        String json = xmlToJson.toString();
         assertEquals("{}", json);
     }
-
 }

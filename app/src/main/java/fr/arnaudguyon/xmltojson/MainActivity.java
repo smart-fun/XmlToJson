@@ -38,11 +38,6 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.main_activity);
 
-//        String xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?><books><toto>titi</toto><book id=\"007\">James Bond</book><book id=\"000\">Book for the dummies</book></books>";
-//        XmlToJson xmlToJson = new XmlToJson.Builder(xml).build();
-//        String formatted = xmlToJson.toFormattedString("\t");
-//        textView.setText(formatted);
-
         try {
             InputStream inputStream = getAssets().open("app_example.xml");
             XmlToJson xmlToJson = new XmlToJson.Builder(inputStream, null)
@@ -52,22 +47,6 @@ public class MainActivity extends AppCompatActivity {
             TextView jsonTextView = (TextView) findViewById(R.id.jsonTextView);
             jsonTextView.setText(formatted);
             inputStream.close();
-
-//            String testXML = "{\n" +
-//                    "\"hello\": \"world\",\n" +
-//                    "\"this\" : \"is\",\n" +
-//                    "\"me\": \"ok\"\n" +
-//                    "}";
-
-//            String testXML = "{\n" +
-//                    "\"hello\": \"world\",\n" +
-//                    "\"this\" : \"is\",\n" +
-//                    "\"object\" : {\n" +
-//                    "\"a\":true,\n" +
-//                    "\"b\": [{\"one\":1},{\"two\":2}],\n" +
-//                    "\"c\": [1,2,3,4]\n" +
-//                    "}\n" +
-//                    "}";
 
             try {
                 JSONObject jsonObject = new JSONObject(formatted);
@@ -89,8 +68,6 @@ public class MainActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-;
 
     }
 }
