@@ -58,6 +58,7 @@ public class XmlToJson {
         private HashSet<String> mForceListPaths = new HashSet<>();
         private HashMap<String, String> mAttributeNameReplacements = new HashMap<>();
         private HashMap<String, String> mContentNameReplacements = new HashMap<>();
+        private HashSet<String> mForceStringForPath = new HashSet<>();
 
         /**
          * Constructor
@@ -117,6 +118,16 @@ public class XmlToJson {
         }
 
         /**
+         * Force an attribute on content value to be a String (by default the library converts numbers to Integer or Double)
+         * @param path Path for the Tag content or Attrbiute, using format like "/parentTag/childTag"
+         * @return the Builder
+         */
+        public Builder forceStringForPath(@NonNull String path) {
+            mForceStringForPath.add(path);
+            return this;
+        }
+
+        /**
          * Creates the XmlToJson object
          *
          * @return a XmlToJson instance
@@ -132,6 +143,7 @@ public class XmlToJson {
     private HashSet<String> mForceListPaths;
     private HashMap<String, String> mAttributeNameReplacements;
     private HashMap<String, String> mContentNameReplacements;
+    private HashSet<String> mForceStringForPath;
     private JSONObject mJsonObject; // Used for caching the result
 
     private XmlToJson(Builder builder) {
@@ -141,6 +153,7 @@ public class XmlToJson {
         mForceListPaths = builder.mForceListPaths;
         mAttributeNameReplacements = builder.mAttributeNameReplacements;
         mContentNameReplacements = builder.mContentNameReplacements;
+        mForceStringForPath = builder.mForceStringForPath;
 
         mJsonObject = convertToJSONObject(); // Build now so that the InputStream can be closed just after
     }
@@ -249,7 +262,7 @@ public class XmlToJson {
         if (tag.getContent() != null) {
             String path = tag.getPath();
             String name = getContentNameReplacement(path, DEFAULT_CONTENT_NAME);
-            putContent(json, name, tag.getContent());
+            putContent(path, json, name, tag.getContent());
         }
 
         try {
@@ -269,7 +282,8 @@ public class XmlToJson {
                             JSONObject jsonChild = convertTagToJson(child, false);
                             json.put(child.getName(), jsonChild);
                         } else {
-                            putContent(json, child.getName(), child.getContent());
+                            String path = child.getPath();
+                            putContent(path, json, child.getName(), child.getContent());
                         }
                     }
                 } else {    // list
@@ -317,10 +331,12 @@ public class XmlToJson {
         return null;
     }
 
-    private void putContent(JSONObject json, String tag, String content) {
+    private void putContent(String path, JSONObject json, String tag, String content) {
         try {
             if (content != null) {
-                if (content.equalsIgnoreCase("true")) {
+                if (mForceStringForPath.contains(path)) {
+                    json.put(tag, content);
+                } if (content.equalsIgnoreCase("true")) {
                     json.put(tag, true);
                 } else if (content.equalsIgnoreCase("false")) {
                     json.put(tag, false);

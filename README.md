@@ -195,6 +195,49 @@ Now \<book> is considered as a list:
 }
 ```
 
+### Force a Tag or Attribute to be a String ###
+
+By default the XML attributes or content that are numbers are converted to Integer or Double. If you want to force them to be a String, then use **Builder.forceStringForPath**(String path).
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<library>
+    <owner>John Doe</owner>
+    <book id="007">James Bond</book>
+    <book id="000">Book for the dummies</book>
+</library>
+```
+
+```java
+public String convertXmlToJson(String xml) {
+    XmlToJson xmlToJson = new XmlToJson.Builder(xml)
+        .Builder.forceStringForPath("/library/book/id")
+        .build();
+    return xmlToJson.toString();
+}
+```
+
+```json
+{  
+   "library":{
+      "owner": "John Doe",
+      "book":[  
+         {  
+            "id":"007",
+            "content":"James Bond"
+         },
+         {  
+            "id":"000",
+            "content":"Book for the dummies"
+         }
+      ]
+   }
+}
+```
+Here "007" and "000" are kept as String, and not converted to 7 and 0.
+
+Note that you can use forceStringForPath AND change the attribute or content name for the same path; the methods in the Builder can be combined. The path used in forceStringForPath is the path in the xml before eventually changing its name.
+
 ## XML to JSON ##
 
 ### Basic usage ###
