@@ -275,7 +275,7 @@ public class XmlToJson {
                     if (isForcedList(child)) {  // list of 1
                         JSONArray list = new JSONArray();
                         list.put(convertTagToJson(child, true));
-                        String childrenNames = tag.getChild(0).getName();
+                        String childrenNames = child.getName();
                         json.put(childrenNames, list);
                     } else {    // stand alone element
                         if (child.hasChildren()) {
