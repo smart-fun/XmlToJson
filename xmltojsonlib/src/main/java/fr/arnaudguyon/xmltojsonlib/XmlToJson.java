@@ -18,6 +18,7 @@ package fr.arnaudguyon.xmltojsonlib;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -59,6 +60,8 @@ public class XmlToJson {
         private HashMap<String, String> mAttributeNameReplacements = new HashMap<>();
         private HashMap<String, String> mContentNameReplacements = new HashMap<>();
         private HashSet<String> mForceStringForPath = new HashSet<>();
+        private HashSet<String> mSkippedAttributes = new HashSet<>();
+        private HashSet<String> mSkippedTags = new HashSet<>();
 
         /**
          * Constructor
@@ -119,11 +122,34 @@ public class XmlToJson {
 
         /**
          * Force an attribute on content value to be a String (by default the library converts numbers to Integer or Double)
-         * @param path Path for the Tag content or Attrbiute, using format like "/parentTag/childTag"
+         *
+         * @param path Path for the Tag content or Attribute, using format like "/parentTag/childTag"
          * @return the Builder
          */
         public Builder forceStringForPath(@NonNull String path) {
             mForceStringForPath.add(path);
+            return this;
+        }
+
+        /**
+         * Skips a Tag (will not be present in the JSON)
+         *
+         * @param path Path for the Tag, using format like "/parentTag/childTag"
+         * @return the Builder
+         */
+        public Builder skipTag(@NonNull String path) {
+            mSkippedTags.add(path);
+            return this;
+        }
+
+        /**
+         * Skips an attribute (will not be present in the JSON)
+         *
+         * @param path Path for the Attribute, using format like "/parentTag/childTag/ChildTagAttribute"
+         * @return the Builder
+         */
+        public Builder skipAttribute(@NonNull String path) {
+            mSkippedAttributes.add(path);
             return this;
         }
 
@@ -144,6 +170,8 @@ public class XmlToJson {
     private HashMap<String, String> mAttributeNameReplacements;
     private HashMap<String, String> mContentNameReplacements;
     private HashSet<String> mForceStringForPath;
+    private HashSet<String> mSkippedAttributes = new HashSet<>();
+    private HashSet<String> mSkippedTags = new HashSet<>();
     private JSONObject mJsonObject; // Used for caching the result
 
     private XmlToJson(Builder builder) {
@@ -154,12 +182,13 @@ public class XmlToJson {
         mAttributeNameReplacements = builder.mAttributeNameReplacements;
         mContentNameReplacements = builder.mContentNameReplacements;
         mForceStringForPath = builder.mForceStringForPath;
+        mSkippedAttributes = builder.mSkippedAttributes;
+        mSkippedTags = builder.mSkippedTags;
 
         mJsonObject = convertToJSONObject(); // Build now so that the InputStream can be closed just after
     }
 
     /**
-     *
      * @return the JSONObject built from the XML
      */
     public
@@ -226,8 +255,13 @@ public class XmlToJson {
                 if (eventType == XmlPullParser.START_TAG) {
                     String tagName = xpp.getName();
                     String path = parent.getPath() + "/" + tagName;
+
+                    boolean skipTag = mSkippedTags.contains(path);
+
                     Tag child = new Tag(path, tagName);
-                    parent.addChild(child);
+                    if (!skipTag) {
+                        parent.addChild(child);
+                    }
 
                     // Attributes are taken into account as key/values in the child
                     int attrCount = xpp.getAttributeCount();
@@ -235,6 +269,12 @@ public class XmlToJson {
                         String attrName = xpp.getAttributeName(i);
                         String attrValue = xpp.getAttributeValue(i);
                         String attrPath = parent.getPath() + "/" + child.getName() + "/" + attrName;
+
+                        // Skip Attributes
+                        if (mSkippedAttributes.contains(attrPath)) {
+                            continue;
+                        }
+
                         attrName = getAttributeNameReplacement(attrPath, attrName);
                         Tag attribute = new Tag(attrPath, attrName);
                         attribute.setContent(attrValue);
@@ -243,7 +283,8 @@ public class XmlToJson {
 
                     readTags(child, xpp);
                 } else if (eventType == XmlPullParser.TEXT) {
-                    parent.setContent(xpp.getText());
+                    String text = xpp.getText();
+                    parent.setContent(text);
                 } else if (eventType == XmlPullParser.END_TAG) {
                     return;
                 } else {
@@ -268,7 +309,7 @@ public class XmlToJson {
         try {
 
             HashMap<String, ArrayList<Tag>> groups = tag.getGroupedElements(); // groups by tag names so that we can detect lists or single elements
-            for(ArrayList<Tag> group : groups.values()) {
+            for (ArrayList<Tag> group : groups.values()) {
 
                 if (group.size() == 1) {    // element, or list of 1
                     Tag child = group.get(0);
@@ -297,34 +338,6 @@ public class XmlToJson {
             }
             return json;
 
-
-//            if (tag.isList() || isForcedList(tag)) {
-//                JSONArray list = new JSONArray();
-//                ArrayList<Tag> children = tag.getChildren();
-//                for (Tag child : children) {
-//                    list.put(convertTagToJson(child, true));
-//                }
-//                String childrenNames = tag.getChild(0).getName();
-//                json.put(childrenNames, list);
-//                return json;
-//            } else {
-//                ArrayList<Tag> children = tag.getChildren();
-//                if (children.size() == 0) {
-//                    if (!isListElement) {
-//                        putContent(json, tag.getName(), tag.getContent());
-//                    }
-//                } else {
-//                    for (Tag child : children) {
-//                        if (child.hasChildren()) {
-//                            JSONObject jsonChild = convertTagToJson(child, false);
-//                            json.put(child.getName(), jsonChild);
-//                        } else {
-//                            putContent(json, child.getName(), child.getContent());
-//                        }
-//                    }
-//                }
-//                return json;
-//            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -336,7 +349,7 @@ public class XmlToJson {
             if (content != null) {
                 if (mForceStringForPath.contains(path)) {
                     json.put(tag, content);
-                } if (content.equalsIgnoreCase("true")) {
+                } else if (content.equalsIgnoreCase("true")) {
                     json.put(tag, true);
                 } else if (content.equalsIgnoreCase("false")) {
                     json.put(tag, false);
@@ -389,8 +402,9 @@ public class XmlToJson {
 
     /**
      * Format the Json with indentation and line breaks
+     *
      * @param indentationPattern indentation to use, for example " " or "\t".
-     *                     if null, use the default 3 spaces indentation
+     *                           if null, use the default 3 spaces indentation
      * @return the formatted Json
      */
     public String toFormattedString(@Nullable String indentationPattern) {
@@ -405,6 +419,7 @@ public class XmlToJson {
     /**
      * Format the Json with indentation and line breaks.
      * Uses the last intendation pattern used, or the default one (3 spaces)
+     *
      * @return the Builder
      */
     public String toFormattedString() {
