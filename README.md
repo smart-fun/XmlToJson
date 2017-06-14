@@ -238,6 +238,42 @@ Here "007" and "000" are kept as String, and not converted to 7 and 0.
 
 Note that you can use forceStringForPath AND change the attribute or content name for the same path; the methods in the Builder can be combined. The path used in forceStringForPath is the path in the xml before eventually changing its name.
 
+### Skip a Tag or an Attribute ###
+
+If you are not interrested in getting all the content of the XML, you can skip some Tags or some Attributes. Like for other methods you have to provide the path for the element to skip. You can use **skipTag** and **skipAttribute** as many times as you need.
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<library>
+    <owner>John Doe</owner>
+    <book id="007">James Bond</book>
+    <book id="000">Book for the dummies</book>
+</library>
+```
+
+```java
+XmlToJson xmlToJson = new XmlToJson.Builder(xml)
+    .skipTag("/library/owner")
+    .skipAttribute("/library/book/id")
+    .build();    
+```
+
+```json
+{  
+   "library":{  
+      "book":[  
+         {  
+            "content":"James Bond"
+         },
+         {  
+            "content":"Book for the dummies"
+         }
+      ]
+   }
+}
+```
+
+
 ## XML to JSON ##
 
 ### Basic usage ###
@@ -355,7 +391,7 @@ Add the libary dependency to your **APP** build.gradle file
 
 ```
 dependencies {
-    compile 'com.github.smart-fun:XmlToJson:1.2.2'    // add this line
+    compile 'com.github.smart-fun:XmlToJson:1.3.2'    // add this line
 }
 ```
 
