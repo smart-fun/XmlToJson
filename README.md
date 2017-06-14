@@ -74,6 +74,14 @@ Thats' it. Here is an example of XML...
 
 By default, the content of a XML Tag is converted into a key called "content". This name can be changed with a custom one, using **Builder.setContentName**(String contentPath, String replacementName). You can change as many content names as you want.
 
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<library>
+    <book id="007">James Bond</book>
+    <book id="000">Book for the dummies</book>
+</library>
+```
+
 ```java
 public String convertXmlToJson(String xml) {
     XmlToJson xmlToJson = new XmlToJson.Builder(xml)
@@ -81,14 +89,6 @@ public String convertXmlToJson(String xml) {
         .build();
     return xmlToJson.toString();
 }
-```
-
-```xml
-<?xml version="1.0" encoding="utf-8"?>
-<library>
-    <book id="007">James Bond</book>
-    <book id="000">Book for the dummies</book>
-</library>
 ```
 
 ```json
@@ -112,6 +112,13 @@ public String convertXmlToJson(String xml) {
 
 Attributes are converted into key / values in the JSON. The attribute names may conflict with other keys. You can change the name of any attribute, by specifying the path to the attribute and the replacement name, using **Builder.setAttributeName**(String attributePath, String replacementName).
 
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<library>
+    <book id="007">James Bond</book>
+    <book id="000">Book for the dummies</book>
+</library>
+```
 
 ```java
 public String convertXmlToJson(String xml) {
@@ -120,14 +127,6 @@ public String convertXmlToJson(String xml) {
         .build();
     return xmlToJson.toString();
 }
-```
-
-```xml
-<?xml version="1.0" encoding="utf-8"?>
-<library>
-    <book id="007">James Bond</book>
-    <book id="000">Book for the dummies</book>
-</library>
 ```
 
 ```json
@@ -274,7 +273,7 @@ XmlToJson xmlToJson = new XmlToJson.Builder(xml)
 ```
 
 
-## XML to JSON ##
+## JSON to XML ##
 
 ### Basic usage ###
 
