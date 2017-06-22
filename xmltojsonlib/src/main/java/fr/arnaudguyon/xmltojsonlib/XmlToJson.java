@@ -501,9 +501,12 @@ public class XmlToJson {
             builder.append("\"");
             builder.append(string);
             builder.append("\"");
+        } else if (value instanceof Long) {
+            Long longValue = (Long) value;
+            builder.append(longValue);
         } else if (value instanceof Integer) {
-            Integer bool = (Integer) value;
-            builder.append(bool);
+            Integer intValue = (Integer) value;
+            builder.append(intValue);
         } else if (value instanceof Boolean) {
             Boolean bool = (Boolean) value;
             builder.append(bool);

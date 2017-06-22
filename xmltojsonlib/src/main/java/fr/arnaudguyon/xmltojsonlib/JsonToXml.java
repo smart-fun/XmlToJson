@@ -215,6 +215,17 @@ public class JsonToXml {
                     JSONArray array = (JSONArray) object;
                     prepareArray(node, key, array);
                 } else {
+
+                    // Issue #6 on github: big numbers are displayed with scientific notation (1498094219318 -> 1.498094219318E12)
+                    // This is how JSON library works, so here is a workaround to detect a Long that is converted to a Double
+                    if (object instanceof Double) {
+                        double doubleObject = (Double) object;
+                        long longValue = (long)doubleObject;
+                        if ((double)longValue == doubleObject) {    // long equals double...
+                            object = Long.valueOf(longValue);       // ... so force to be a Long instead
+                        }
+                    }
+
                     String path = node.getPath() + "/" + key;
                     String value = object.toString();
                     if (isAttribute(path)) {
