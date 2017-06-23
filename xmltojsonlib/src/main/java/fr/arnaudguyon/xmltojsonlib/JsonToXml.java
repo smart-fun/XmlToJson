@@ -28,8 +28,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Locale;
 
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Source;
@@ -45,6 +48,8 @@ import javax.xml.transform.stream.StreamSource;
 public class JsonToXml {
 
     private static final int DEFAULT_INDENTATION = 3;
+    // TODO: Set up Locale in the builder
+    private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("0", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
 
     public static class Builder {
 
@@ -215,19 +220,28 @@ public class JsonToXml {
                     JSONArray array = (JSONArray) object;
                     prepareArray(node, key, array);
                 } else {
-
-                    // Issue #6 on github: big numbers are displayed with scientific notation (1498094219318 -> 1.498094219318E12)
-                    // This is how JSON library works, so here is a workaround to detect a Long that is converted to a Double
-                    if (object instanceof Double) {
-                        double doubleObject = (Double) object;
-                        long longValue = (long)doubleObject;
-                        if ((double)longValue == doubleObject) {    // long equals double...
-                            object = Long.valueOf(longValue);       // ... so force to be a Long instead
-                        }
-                    }
-
                     String path = node.getPath() + "/" + key;
-                    String value = object.toString();
+                    // JSON numbers are represented either Integer or Double (IEEE 754)
+                    // Long may be represented in scientific notation because they are stored as Double
+                    // This workaround attempts to represent Long and Double objects accordingly
+                    String value;
+                    if (object instanceof Double) {
+                        double d = (double) object;
+                        // If it is a Long
+                        if (d % 1 == 0) {
+                            value = Long.toString((long) d);
+                        } else {
+                            // TODO: Set up number of decimal digits per attribute in the builder
+                            // Set only once. Represent all double numbers up to 20 decimal digits
+                            if (DECIMAL_FORMAT.getMaximumFractionDigits() == 0) {
+                                DECIMAL_FORMAT.setMaximumFractionDigits(20);
+                            }
+                            value = DECIMAL_FORMAT.format(d);
+                        }
+                    } else {
+                        // Integer, Boolean and String are handled here
+                        value = object.toString();
+                    }
                     if (isAttribute(path)) {
                         node.addAttribute(key, value);
                     } else if (isContent(path) ) {
