@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
+<map>
+    <number name="a" value="42" />
+    <number name="b" value="1498094219318" />
+    <number name="c" value="0.100" />
+    <number name="d" value="1099511627776.5" />
+</map>

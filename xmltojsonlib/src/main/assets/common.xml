@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<library>
+    <owner>John Doe</owner>
+    <book id="007">James Bond</book>
+    <book id="000">Book for the dummies</book>
+</library>

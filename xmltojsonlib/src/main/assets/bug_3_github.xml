@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="gb2312"?>
+<biblio>
+    <auteur id="4">
+        <nom>Herge</nom>
+        <ouvrages quantite="1">
+            <livre id="0">
+                <type>BD</type>
+                <titre>Le secret de la licorne</titre>
+            </livre>
+        </ouvrages>
+    </auteur>
+    <auteur id="5">
+        <nom>Franquin</nom>
+        <ouvrages quantite="3">
+            <livre id="0">
+                <type>BD</type>
+                <titre>Z comme Zorglub</titre>
+            </livre>
+            <livre id="1">
+                <type>BD</type>
+                <titre>Spirou et les hommes bulle</titre>
+            </livre>
+            <livre id="2">
+                <type>BD</type>
+                <titre>Le nid du marsupilami</titre>
+            </livre>
+        </ouvrages>
+    </auteur>
+    <result>1</result>
+    <result_info>succes</result_info>
+</biblio>
