@@ -150,4 +150,76 @@ public class ExampleInstrumentedTest {
 
     }
 
+    @Test
+    public void attributeReplacementTest() throws Exception {
+
+        Context context = InstrumentationRegistry.getTargetContext();
+        AssetManager assetManager = context.getAssets();
+        InputStream inputStream = assetManager.open("common.xml");
+
+        XmlToJson xmlToJson = new XmlToJson.Builder(inputStream, null)
+                .setAttributeName("/library/book/id", "attributeReplacement")
+                .build();
+
+        inputStream.close();
+
+        JSONObject result = xmlToJson.toJson();
+        JSONObject library = result.getJSONObject("library");
+        JSONArray books = library.getJSONArray("book");
+        assertEquals(books.length(), 2);
+        for(int i=0 ;i<books.length(); ++i) {
+            JSONObject book = books.getJSONObject(i);
+            book.getInt("attributeReplacement");
+        }
+    }
+
+    @Test
+    public void contentReplacementTest() throws Exception {
+
+        Context context = InstrumentationRegistry.getTargetContext();
+        AssetManager assetManager = context.getAssets();
+        InputStream inputStream = assetManager.open("common.xml");
+
+        XmlToJson xmlToJson = new XmlToJson.Builder(inputStream, null)
+                .setContentName("/library/book", "contentReplacement")
+                .build();
+
+        inputStream.close();
+
+        JSONObject result = xmlToJson.toJson();
+        JSONObject library = result.getJSONObject("library");
+        JSONArray books = library.getJSONArray("book");
+        JSONObject book1 = books.getJSONObject(0);
+        JSONObject book2 = books.getJSONObject(1);
+        String content1 = book1.getString("contentReplacement");
+        String content2 = book2.getString("contentReplacement");
+        assertTrue(content1.equals("James Bond") || content1.equals("Book for the dummies"));
+        assertTrue(content2.equals("James Bond") || content2.equals("Book for the dummies"));
+    }
+
+    @Test
+    public void oneObjectTest() throws Exception {
+
+        String xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?><books><book id=\"007\">James Bond</book></books>";
+
+        XmlToJson xmlToJson = new XmlToJson.Builder(xml).build();
+        JSONObject json = xmlToJson.toJson();
+        JSONObject books = json.getJSONObject("books");
+        books.getJSONObject("book");
+    }
+
+    @Test
+    public void oneObjectAsListTest() throws Exception {
+
+        String xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?><books><book id=\"007\">James Bond</book><other id=\"hello\"/></books>";
+
+        XmlToJson xmlToJson = new XmlToJson.Builder(xml)
+                .forceList("/books/book")
+                .build();
+        JSONObject json = xmlToJson.toJson();
+        JSONObject books = json.getJSONObject("books");
+        books.getJSONArray("book");
+    }
+
+
 }
