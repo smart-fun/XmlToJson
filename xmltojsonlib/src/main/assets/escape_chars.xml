@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<main>
+    <test>aa="\11"</test>
+    <test2>aa="42"</test2>
+    <description><![CDATA[<img src="http://cdn.link.net/154335.jpg" align="left" hspace="7" width="120" height="90"/>any desc here.]]>
+    </description>
+</main>

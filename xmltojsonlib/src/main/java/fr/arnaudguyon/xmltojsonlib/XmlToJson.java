@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.regex.Matcher;
 
 /**
  * Converts XML to JSON
@@ -498,6 +499,13 @@ public class XmlToJson {
     private void formatValue(Object value, StringBuilder builder) {
         if (value instanceof String) {
             String string = (String) value;
+
+            // Escape special characters
+            string = string.replaceAll("\\\\", "\\\\\\\\");                     // escape backslash
+            string = string.replaceAll("\"", Matcher.quoteReplacement("\\\"")); // escape double quotes
+            string = string.replaceAll("/", "\\\\/");                           // escape slash
+            string = string.replaceAll("\n","\\\\n").replaceAll("\t","\\\\t");  // escape \n and \t
+
             builder.append("\"");
             builder.append(string);
             builder.append("\"");

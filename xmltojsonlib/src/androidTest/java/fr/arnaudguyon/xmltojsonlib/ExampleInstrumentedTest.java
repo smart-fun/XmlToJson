@@ -7,6 +7,7 @@ import android.support.test.runner.AndroidJUnit4;
 import android.text.TextUtils;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -219,6 +220,24 @@ public class ExampleInstrumentedTest {
         JSONObject json = xmlToJson.toJson();
         JSONObject books = json.getJSONObject("books");
         books.getJSONArray("book");
+    }
+
+    @Test
+    public void escapeSpecialCharsTest() throws Exception {
+        Context context = InstrumentationRegistry.getTargetContext();
+        AssetManager assetManager = context.getAssets();
+        InputStream inputStream = assetManager.open("escape_chars.xml");
+
+        XmlToJson xmlToJson = new XmlToJson.Builder(inputStream, null).build();
+        inputStream.close();
+
+        try {
+            String formatted = xmlToJson.toFormattedString();
+            new JSONObject(formatted);
+        } catch (JSONException exception) {
+            exception.printStackTrace();
+            assertTrue("invalid JSON", false);
+        }
     }
 
 
