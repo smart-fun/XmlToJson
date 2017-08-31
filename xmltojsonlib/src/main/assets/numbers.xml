@@ -1,7 +1,13 @@
 <?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
 <map>
-    <number name="a" value="42" />
-    <number name="b" value="1498094219318" />
-    <number name="c" value="0.100" />
-    <number name="d" value="1099511627776.5" />
+    <a>42</a>
+    <b>1498094219318</b>
+    <c>0.100</c>
+    <d>1099511627776.5</d>
+    <e>true</e>
+    <f>false</f>
+    <g></g>
+    <h></h>
+    <i id="43"/>
+    <j>44</j>
 </map>

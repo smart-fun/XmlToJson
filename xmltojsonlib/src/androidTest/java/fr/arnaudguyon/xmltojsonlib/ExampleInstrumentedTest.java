@@ -30,19 +30,58 @@ public class ExampleInstrumentedTest {
         Context context = InstrumentationRegistry.getTargetContext();
         AssetManager assetManager = context.getAssets();
         InputStream inputStream = assetManager.open("numbers.xml");
-        XmlToJson xmlToJson = new XmlToJson.Builder(inputStream, null).build();
+        XmlToJson xmlToJson = new XmlToJson.Builder(inputStream, null)
+                .forceIntegerForPath("/map/a")
+                .forceLongForPath("/map/b")
+                .forceDoubleForPath("/map/c")
+                .forceDoubleForPath("/map/d")
+                .forceIntegerForPath("/map/i/id")
+                .build();
         inputStream.close();
 
         JSONObject json = xmlToJson.toJson();
 
+        JSONObject map = json.getJSONObject("map");
+        assertTrue(map.getInt("a") == 42);
+        assertTrue(map.getLong("b") == 1498094219318L);
+        assertTrue(map.getDouble("c") == 0.1);
+        assertTrue(map.getDouble("d") == 1099511627776.5);
+
+        JSONObject i = map.getJSONObject("i");
+        assertTrue(i.getInt("id") == 43);
+
+        assertTrue(map.getString("j").equals("44"));
+
         JsonToXml jsonToXml = new JsonToXml.Builder(json).build();
 
         String result = jsonToXml.toString();
-        assertTrue(result.contains("<value>1498094219318</value>"));
-        assertTrue(result.contains("<value>0.1</value>"));
-        assertTrue(result.contains("<value>1099511627776.5</value>"));
+        assertTrue(result.contains("<a>42</a>"));
+        assertTrue(result.contains("<b>1498094219318</b>"));
+        assertTrue(result.contains("<c>0.1</c>"));
+        assertTrue(result.contains("<d>1099511627776.5</d>"));
     }
 
+    @Test
+    public void boolAndEmptyTest() throws Exception {
+
+        Context context = InstrumentationRegistry.getTargetContext();
+        AssetManager assetManager = context.getAssets();
+        InputStream inputStream = assetManager.open("numbers.xml");
+        XmlToJson xmlToJson = new XmlToJson.Builder(inputStream, null)
+                .forceBooleanForPath("/map/e")
+                .forceBooleanForPath("/map/f")
+                .forceBooleanForPath("/map/g")
+                .build();
+        inputStream.close();
+
+        JSONObject json = xmlToJson.toJson();
+
+        JSONObject map = json.getJSONObject("map");
+        assertTrue(map.getBoolean("e") == true);
+        assertTrue(map.getBoolean("f") == false);
+        assertTrue(map.getBoolean("g") == false);
+        assertTrue(map.getString("h").equals(""));
+    }
 
     @Test
     public void invalidHelloWorldTest() throws Exception {
@@ -53,11 +92,11 @@ public class ExampleInstrumentedTest {
     }
 
     @Test
-    public void invalidUnfinishedTest() throws Exception {
-        String xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?><books>";
+    public void emptyTagTest() throws Exception {
+        String xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?><books/>";
         XmlToJson xmlToJson = new XmlToJson.Builder(xml).build();
         String json = xmlToJson.toString();
-        assertEquals("{}", json);
+        assertEquals("{\"books\":\"\"}", json);
     }
 
     @Test

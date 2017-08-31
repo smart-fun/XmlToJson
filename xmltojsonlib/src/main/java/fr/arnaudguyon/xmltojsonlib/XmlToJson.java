@@ -49,6 +49,13 @@ public class XmlToJson {
     private static final String DEFAULT_INDENTATION = "   ";
     private String mIndentationPattern = DEFAULT_INDENTATION;
 
+    // default values when a Tag is empty
+    private static final String DEFAULT_EMPTY_STRING = "";
+    private static final int DEFAULT_EMPTY_INTEGER = 0;
+    private static final long DEFAULT_EMPTY_LONG = 0;
+    private static final double DEFAULT_EMPTY_DOUBLE = 0;
+    private static final boolean DEFAULT_EMPTY_BOOLEAN = false;
+
     /**
      * Builder class to create a XmlToJson object
      */
@@ -60,7 +67,7 @@ public class XmlToJson {
         private HashSet<String> mForceListPaths = new HashSet<>();
         private HashMap<String, String> mAttributeNameReplacements = new HashMap<>();
         private HashMap<String, String> mContentNameReplacements = new HashMap<>();
-        private HashSet<String> mForceStringForPath = new HashSet<>();
+        private HashMap<String, Class> mForceClassForPath = new HashMap<>();    // Integer, Long, Double, Boolean
         private HashSet<String> mSkippedAttributes = new HashSet<>();
         private HashSet<String> mSkippedTags = new HashSet<>();
 
@@ -122,13 +129,42 @@ public class XmlToJson {
         }
 
         /**
-         * Force an attribute on content value to be a String (by default the library converts numbers to Integer or Double)
-         *
+         * Force an attribute or content value to be a INTEGER. A default value is used if the content is missing.
          * @param path Path for the Tag content or Attribute, using format like "/parentTag/childTag"
          * @return the Builder
          */
-        public Builder forceStringForPath(@NonNull String path) {
-            mForceStringForPath.add(path);
+        public Builder forceIntegerForPath(@NonNull String path) {
+            mForceClassForPath.put(path, Integer.class);
+            return this;
+        }
+
+        /**
+         * Force an attribute or content value to be a LONG. A default value is used if the content is missing.
+         * @param path Path for the Tag content or Attribute, using format like "/parentTag/childTag"
+         * @return the Builder
+         */
+        public Builder forceLongForPath(@NonNull String path) {
+            mForceClassForPath.put(path, Long.class);
+            return this;
+        }
+
+        /**
+         * Force an attribute or content value to be a DOUBLE. A default value is used if the content is missing.
+         * @param path Path for the Tag content or Attribute, using format like "/parentTag/childTag"
+         * @return the Builder
+         */
+        public Builder forceDoubleForPath(@NonNull String path) {
+            mForceClassForPath.put(path, Double.class);
+            return this;
+        }
+
+        /**
+         * Force an attribute or content value to be a BOOLEAN. A default value is used if the content is missing.
+         * @param path Path for the Tag content or Attribute, using format like "/parentTag/childTag"
+         * @return the Builder
+         */
+        public Builder forceBooleanForPath(@NonNull String path) {
+            mForceClassForPath.put(path, Boolean.class);
             return this;
         }
 
@@ -170,7 +206,7 @@ public class XmlToJson {
     private HashSet<String> mForceListPaths;
     private HashMap<String, String> mAttributeNameReplacements;
     private HashMap<String, String> mContentNameReplacements;
-    private HashSet<String> mForceStringForPath;
+    private HashMap<String, Class> mForceClassForPath;
     private HashSet<String> mSkippedAttributes = new HashSet<>();
     private HashSet<String> mSkippedTags = new HashSet<>();
     private JSONObject mJsonObject; // Used for caching the result
@@ -182,7 +218,7 @@ public class XmlToJson {
         mForceListPaths = builder.mForceListPaths;
         mAttributeNameReplacements = builder.mAttributeNameReplacements;
         mContentNameReplacements = builder.mContentNameReplacements;
-        mForceStringForPath = builder.mForceStringForPath;
+        mForceClassForPath = builder.mForceClassForPath;
         mSkippedAttributes = builder.mSkippedAttributes;
         mSkippedTags = builder.mSkippedTags;
 
@@ -347,28 +383,50 @@ public class XmlToJson {
 
     private void putContent(String path, JSONObject json, String tag, String content) {
         try {
-            if (content != null) {
-                if (mForceStringForPath.contains(path)) {
-                    json.put(tag, content);
-                } else if (content.equalsIgnoreCase("true")) {
-                    json.put(tag, true);
-                } else if (content.equalsIgnoreCase("false")) {
-                    json.put(tag, false);
-                } else {
+            // checks if the user wants to force a class (Int, Double... for a given path)
+            Class forcedClass = mForceClassForPath.get(path);
+            if (forcedClass == null) {  // default behaviour, put it as a String
+                if (content == null) {
+                    content = DEFAULT_EMPTY_STRING;
+                }
+                json.put(tag, content);
+            } else {
+                if (forcedClass == Integer.class) {
                     try {
-                        Integer integer = Integer.parseInt(content);
-                        json.put(tag, integer);
-                    } catch (NumberFormatException exceptionInt) {
-                        try {
-                            Double number = Double.parseDouble(content);
-                            json.put(tag, number.doubleValue());
-                        } catch (NumberFormatException exceptionDouble) {
-                            json.put(tag, content);
-                        }
+                        Integer number = Integer.parseInt(content);
+                        json.put(tag, number);
+                    } catch (NumberFormatException exception) {
+                        json.put(tag, DEFAULT_EMPTY_INTEGER);
+                    }
+                } else if (forcedClass == Long.class) {
+                    try {
+                        Long number = Long.parseLong(content);
+                        json.put(tag, number);
+                    } catch (NumberFormatException exception) {
+                        json.put(tag, DEFAULT_EMPTY_LONG);
+                    }
+                } else if (forcedClass == Double.class) {
+                    try {
+                        Double number = Double.parseDouble(content);
+                        json.put(tag, number);
+                    } catch (NumberFormatException exception) {
+                        json.put(tag, DEFAULT_EMPTY_DOUBLE);
+                    }
+                } else if (forcedClass == Boolean.class) {
+                    if (content == null) {
+                        json.put(tag, DEFAULT_EMPTY_BOOLEAN);
+                    } else if (content.equalsIgnoreCase("true")) {
+                        json.put(tag, true);
+                    } else if (content.equalsIgnoreCase("false")) {
+                        json.put(tag, false);
+                    } else {
+                        json.put(tag, DEFAULT_EMPTY_BOOLEAN);
                     }
                 }
             }
+
         } catch (JSONException exception) {
+            // keep continue in case of error
         }
     }
 
@@ -504,7 +562,7 @@ public class XmlToJson {
             string = string.replaceAll("\\\\", "\\\\\\\\");                     // escape backslash
             string = string.replaceAll("\"", Matcher.quoteReplacement("\\\"")); // escape double quotes
             string = string.replaceAll("/", "\\\\/");                           // escape slash
-            string = string.replaceAll("\n","\\\\n").replaceAll("\t","\\\\t");  // escape \n and \t
+            string = string.replaceAll("\n", "\\\\n").replaceAll("\t", "\\\\t");  // escape \n and \t
 
             builder.append("\"");
             builder.append(string);
