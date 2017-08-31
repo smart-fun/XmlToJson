@@ -58,11 +58,11 @@ Thats' it. Here is an example of XML...
       "owner": "John Doe",
       "book":[  
          {  
-            "id":7,
+            "id":"007",
             "content":"James Bond"
          },
          {  
-            "id":0,
+            "id":"000",
             "content":"Book for the dummies"
          }
       ]
@@ -96,11 +96,11 @@ public String convertXmlToJson(String xml) {
    "library":{  
       "book":[  
          {  
-            "id":7,
+            "id":"007",
             "title":"James Bond"
          },
          {  
-            "id":0,
+            "id":"000",
             "title":"Book for the dummies"
          }
       ]
@@ -134,11 +134,11 @@ public String convertXmlToJson(String xml) {
    "library":{  
       "book":[  
          {  
-            "code":7,
+            "code":"007",
             "content":"James Bond"
          },
          {  
-            "code":0,
+            "code":"000",
             "content":"Book for the dummies"
          }
       ]
@@ -163,7 +163,7 @@ By default, the \<book> tag is NOT considered as a list
 {  
    "library":{  
       "book":{  
-         "id":7,
+         "id":"007",
          "content":"James Bond"
       }
    }
@@ -186,7 +186,7 @@ Now \<book> is considered as a list:
    "library":{  
       "book":[  
          {  
-            "id":7,
+            "id":"007",
             "content":"James Bond"
          }
       ]
@@ -194,9 +194,9 @@ Now \<book> is considered as a list:
 }
 ```
 
-### Force a Tag or Attribute to be a String ###
+### Force a Tag or Attribute to be an Integer / Long / Double / Boolean ###
 
-By default the XML attributes or content that are numbers are converted to Integer or Double. If you want to force them to be a String, then use **Builder.forceStringForPath**(String path).
+By default the XML attributes or content are processed as Strings. If you want to force them to be another type (like Integer), then use on of these methods **Builder.forceIntegerForPath**(String path), **Builder.forceLongForPath**(String path), **Builder.forceDoubleForPath**(String path) or **Builder.forceBooleanForPath**(String path).
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
@@ -210,7 +210,7 @@ By default the XML attributes or content that are numbers are converted to Integ
 ```java
 public String convertXmlToJson(String xml) {
     XmlToJson xmlToJson = new XmlToJson.Builder(xml)
-        .Builder.forceStringForPath("/library/book/id")
+        .Builder.forceIntegerForPath("/library/book/id")
         .build();
     return xmlToJson.toString();
 }
@@ -222,20 +222,20 @@ public String convertXmlToJson(String xml) {
       "owner": "John Doe",
       "book":[  
          {  
-            "id":"007",
+            "id":7,
             "content":"James Bond"
          },
          {  
-            "id":"000",
+            "id":0,
             "content":"Book for the dummies"
          }
       ]
    }
 }
 ```
-Here "007" and "000" are kept as String, and not converted to 7 and 0.
+Here "007" and "000" are converted to 7 and 0.
 
-Note that you can use forceStringForPath AND change the attribute or content name for the same path; the methods in the Builder can be combined. The path used in forceStringForPath is the path in the xml before eventually changing its name.
+Note that you can use forcexxxForPath methods AND change the attribute or content name for the same path; the methods in the Builder can be combined. The path used in forcexxxForPath methods is the path in the xml before eventually changing its name.
 
 ### Skip a Tag or an Attribute ###
 
@@ -390,7 +390,7 @@ Add the libary dependency to your **APP** build.gradle file
 
 ```
 dependencies {
-    compile 'com.github.smart-fun:XmlToJson:1.3.6'    // add this line
+    compile 'com.github.smart-fun:XmlToJson:1.4.0'    // add this line
 }
 ```
 
