@@ -324,6 +324,8 @@ public class XmlToJson {
                     parent.setContent(text);
                 } else if (eventType == XmlPullParser.END_TAG) {
                     return;
+                } else if (eventType == XmlPullParser.END_DOCUMENT) {
+                    return;
                 } else {
                     Log.i(TAG, "unknown xml eventType " + eventType);
                 }
