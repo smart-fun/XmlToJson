@@ -565,6 +565,7 @@ public class XmlToJson {
             string = string.replaceAll("\"", Matcher.quoteReplacement("\\\"")); // escape double quotes
             string = string.replaceAll("/", "\\\\/");                           // escape slash
             string = string.replaceAll("\n", "\\\\n").replaceAll("\t", "\\\\t");  // escape \n and \t
+            string = string.replaceAll("\r", "\\\\r");  // escape \r
 
             builder.append("\"");
             builder.append(string);

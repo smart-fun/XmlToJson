@@ -5,6 +5,7 @@ import android.content.res.AssetManager;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 import android.text.TextUtils;
+import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -23,6 +24,8 @@ import static org.junit.Assert.*;
  */
 @RunWith(AndroidJUnit4.class)
 public class ExampleInstrumentedTest {
+
+    private static final String TAG = "ExampleInstrumentedTest";
 
     @Test
     public void numbersTest() throws Exception {
@@ -163,7 +166,7 @@ public class ExampleInstrumentedTest {
         JSONArray books = library.getJSONArray("book");
         int size = books.length();
         assertTrue(size == 2);
-        for(int i=0; i<size; ++i) {
+        for (int i = 0; i < size; ++i) {
             JSONObject book = books.getJSONObject(i);
             assertFalse(book.has("id"));
         }
@@ -207,7 +210,7 @@ public class ExampleInstrumentedTest {
         JSONObject library = result.getJSONObject("library");
         JSONArray books = library.getJSONArray("book");
         assertEquals(books.length(), 2);
-        for(int i=0 ;i<books.length(); ++i) {
+        for (int i = 0; i < books.length(); ++i) {
             JSONObject book = books.getJSONObject(i);
             book.getInt("attributeReplacement");
         }
@@ -273,6 +276,35 @@ public class ExampleInstrumentedTest {
         try {
             String formatted = xmlToJson.toFormattedString();
             new JSONObject(formatted);
+        } catch (JSONException exception) {
+            exception.printStackTrace();
+            assertTrue("invalid JSON", false);
+        }
+    }
+
+    // "\r" characters were not escaped
+    // RSS feed taken from https://www.bola.net/feed/
+    @Test
+    public void rssURLescaped() throws Exception {
+        Context context = InstrumentationRegistry.getTargetContext();
+        AssetManager assetManager = context.getAssets();
+        InputStream inputStream = assetManager.open("rss.xml");
+
+        XmlToJson xmlToJson = new XmlToJson.Builder(inputStream, null).build();
+        inputStream.close();
+
+        try {
+            JSONObject json = xmlToJson.toJson();
+            JSONObject rss = json.getJSONObject("rss");
+            JSONObject channel = rss.getJSONObject("channel");
+            JSONArray items = channel.getJSONArray("item");
+            for (int i = 0; i < items.length(); ++i) {
+                JSONObject item = items.getJSONObject(i);
+                JSONObject enclosure = item.getJSONObject("enclosure");
+                String url = enclosure.getString("url");
+                Log.i(TAG, "url: " + url);
+            }
+            json.toString();
         } catch (JSONException exception) {
             exception.printStackTrace();
             assertTrue("invalid JSON", false);
