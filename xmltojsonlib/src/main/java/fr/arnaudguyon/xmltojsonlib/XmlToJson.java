@@ -36,6 +36,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static java.util.regex.Pattern.DOTALL;
 
 /**
  * Converts XML to JSON
@@ -65,6 +68,7 @@ public class XmlToJson {
         private InputStream mInputStreamSource;
         private String mInputEncoding = DEFAULT_ENCODING;
         private HashSet<String> mForceListPaths = new HashSet<>();
+        private HashSet<Pattern> mForceListPatterns = new HashSet<>();
         private HashMap<String, String> mAttributeNameReplacements = new HashMap<>();
         private HashMap<String, String> mContentNameReplacements = new HashMap<>();
         private HashMap<String, Class> mForceClassForPath = new HashMap<>();    // Integer, Long, Double, Boolean
@@ -99,6 +103,18 @@ public class XmlToJson {
          */
         public Builder forceList(@NonNull String path) {
             mForceListPaths.add(path);
+            return this;
+        }
+
+        /**
+         * Force a XML Tag to be interpreted as a list, using a RegEx pattern for the path
+         *
+         * @param pattern Path for the tag using RegEx, like "*childTag/tagAsAList"
+         * @return the Builder
+         */
+        public Builder forceListPattern(@NonNull String pattern) {
+            Pattern pat = Pattern.compile(pattern, DOTALL);
+            mForceListPatterns.add(pat);
             return this;
         }
 
@@ -204,6 +220,7 @@ public class XmlToJson {
     private InputStream mInputStreamSource;
     private String mInputEncoding;
     private HashSet<String> mForceListPaths;
+    private HashSet<Pattern> mForceListPatterns = new HashSet<>();
     private HashMap<String, String> mAttributeNameReplacements;
     private HashMap<String, String> mContentNameReplacements;
     private HashMap<String, Class> mForceClassForPath;
@@ -216,6 +233,7 @@ public class XmlToJson {
         mInputStreamSource = builder.mInputStreamSource;
         mInputEncoding = builder.mInputEncoding;
         mForceListPaths = builder.mForceListPaths;
+        mForceListPatterns = builder.mForceListPatterns;
         mAttributeNameReplacements = builder.mAttributeNameReplacements;
         mContentNameReplacements = builder.mContentNameReplacements;
         mForceClassForPath = builder.mForceClassForPath;
@@ -434,7 +452,16 @@ public class XmlToJson {
 
     private boolean isForcedList(Tag tag) {
         String path = tag.getPath();
-        return mForceListPaths.contains(path);
+        if (mForceListPaths.contains(path)) {
+            return true;
+        }
+        for(Pattern pattern : mForceListPatterns) {
+            Matcher matcher = pattern.matcher(path);
+            if (matcher.find()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private String getAttributeNameReplacement(String path, String defaultValue) {

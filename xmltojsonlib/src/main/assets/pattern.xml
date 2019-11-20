@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<catalog>
+    <list>
+        <item id="item A 1"/>
+        <item id="item A 2">
+            <list>
+                <item id="item B 1"/>
+            </list>
+        </item>
+        <notitem id="notitem Z" />
+    </list>
+    <tlist>
+        <item id="item C 1"/>
+    </tlist>
+</catalog>

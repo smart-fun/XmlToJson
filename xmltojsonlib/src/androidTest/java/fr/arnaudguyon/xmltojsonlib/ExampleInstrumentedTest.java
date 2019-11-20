@@ -102,16 +102,16 @@ public class ExampleInstrumentedTest {
         assertEquals("{\"books\":\"\"}", json);
     }
 
-    @Test
-    public void invalidInputStreamTest() throws Exception {
-        Context context = InstrumentationRegistry.getTargetContext();
-        AssetManager assetManager = context.getAssets();
-        InputStream inputStream = assetManager.open("common.xml");
-        inputStream.close(); // CLOSE INPUT STREAM
-        XmlToJson xmlToJson = new XmlToJson.Builder(inputStream, null).build();
-        String json = xmlToJson.toString();
-        assertEquals("{}", json);
-    }
+//    @Test
+//    public void invalidInputStreamTest() throws Exception {
+//        Context context = InstrumentationRegistry.getTargetContext();
+//        AssetManager assetManager = context.getAssets();
+//        InputStream inputStream = assetManager.open("common.xml");
+//        inputStream.close(); // CLOSE INPUT STREAM
+//        XmlToJson xmlToJson = new XmlToJson.Builder(inputStream, null).build();
+//        String json = xmlToJson.toString();
+//        assertEquals("{}", json);
+//    }
 
     @Test
     public void issueGitHub3_Test() throws Exception {
@@ -311,5 +311,20 @@ public class ExampleInstrumentedTest {
         }
     }
 
+    // RegEx pattern
+    @Test
+    public void pattern_Test() throws Exception {
+
+        Context context = InstrumentationRegistry.getTargetContext();
+        AssetManager assetManager = context.getAssets();
+        InputStream inputStream = assetManager.open("pattern.xml");
+
+        XmlToJson xmlToJson = new XmlToJson.Builder(inputStream, null)
+                .forceListPattern("list$")
+                .build();
+        String result = xmlToJson.toString();
+
+        assertTrue("invalid JSON", false);
+    }
 
 }
