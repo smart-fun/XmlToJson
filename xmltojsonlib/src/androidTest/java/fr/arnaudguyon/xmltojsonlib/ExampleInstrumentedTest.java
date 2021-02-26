@@ -16,6 +16,7 @@ import org.junit.runner.RunWith;
 import java.io.InputStream;
 
 import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Instrumentation test, which will execute on an Android device.
@@ -322,9 +323,30 @@ public class ExampleInstrumentedTest {
         XmlToJson xmlToJson = new XmlToJson.Builder(inputStream, null)
                 .forceListPattern("list$")
                 .build();
-        String result = xmlToJson.toString();
 
-        assertTrue("invalid JSON", false);
+        try {
+            JSONObject json = xmlToJson.toJson();
+            JSONObject catalog = json.getJSONObject("catalog");
+            Object list1 = catalog.opt("tlist");
+            assertTrue(list1 instanceof JSONArray);
+            Object list2 = catalog.opt("list");
+            assertTrue(list2 instanceof JSONArray);
+            JSONArray array2 = (JSONArray) list2;
+            for(int i=0; i<array2.length(); ++i) {
+                JSONObject element = array2.getJSONObject(i);
+                JSONArray items = element.getJSONArray("item");
+                for(int j=0; j<items.length(); ++j) {
+                    JSONObject item = items.getJSONObject(j);
+                    if (item.has("list")) {
+                        Object list3 = item.get("list");
+                        assertTrue(list3 instanceof JSONArray);
+                    }
+                }
+            }
+        } catch (JSONException exception) {
+            exception.printStackTrace();
+            assertTrue("invalid JSON", false);
+        }
     }
 
 }
