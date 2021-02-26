@@ -3,7 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/XmlToJson.iml" filepath="$PROJECT_DIR$/XmlToJson.iml" />
-      <module fileurl="file://$PROJECT_DIR$/xmltojsonlib/xmltojsonlib.iml" filepath="$PROJECT_DIR$/xmltojsonlib/xmltojsonlib.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/xmltojsonlib/XmlToJson.xmltojsonlib.iml" filepath="$PROJECT_DIR$/.idea/modules/xmltojsonlib/XmlToJson.xmltojsonlib.iml" />
     </modules>
   </component>
 </project>
