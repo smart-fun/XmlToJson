@@ -16,9 +16,6 @@ package fr.arnaudguyon.xmltojsonlib;
     limitations under the License.
  */
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.text.TextUtils;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -37,6 +34,9 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import static java.util.regex.Pattern.DOTALL;
 
