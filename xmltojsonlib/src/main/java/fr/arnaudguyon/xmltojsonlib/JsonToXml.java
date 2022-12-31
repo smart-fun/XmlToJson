@@ -15,8 +15,6 @@
  */
 package fr.arnaudguyon.xmltojsonlib;
 
-import android.support.annotation.IntRange;
-import android.support.annotation.NonNull;
 import android.util.Xml;
 
 import org.json.JSONArray;
@@ -40,6 +38,9 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
+
+import androidx.annotation.IntRange;
+import androidx.annotation.NonNull;
 
 /**
  * Converts JSON to XML
