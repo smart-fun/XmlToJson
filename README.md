@@ -390,7 +390,7 @@ Add the libary dependency to your **APP** build.gradle file
 
 ```
 dependencies {
-    implementation 'com.github.smart-fun:XmlToJson:1.5.1'    // add this line
+    implementation 'com.github.smart-fun:XmlToJson:1.5.2'    // add this line
 }
 ```
 
