@@ -4,6 +4,9 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/XmlToJson.iml" filepath="$PROJECT_DIR$/.idea/modules/XmlToJson.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/xmltojsonlib/XmlToJson.xmltojsonlib.iml" filepath="$PROJECT_DIR$/.idea/modules/xmltojsonlib/XmlToJson.xmltojsonlib.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/xmltojsonlib/XmlToJson.xmltojsonlib.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/xmltojsonlib/XmlToJson.xmltojsonlib.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/xmltojsonlib/XmlToJson.xmltojsonlib.main.iml" filepath="$PROJECT_DIR$/.idea/modules/xmltojsonlib/XmlToJson.xmltojsonlib.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/xmltojsonlib/XmlToJson.xmltojsonlib.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/xmltojsonlib/XmlToJson.xmltojsonlib.unitTest.iml" />
     </modules>
   </component>
 </project>

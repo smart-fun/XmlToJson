@@ -17,12 +17,12 @@ package fr.arnaudguyon.xmltojsonlib;
 
 import android.content.Context;
 
+import androidx.annotation.NonNull;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-
-import androidx.annotation.NonNull;
 
 /**
  * Created by arnaud on 03/12/2016.

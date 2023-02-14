@@ -35,10 +35,10 @@ import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static java.util.regex.Pattern.DOTALL;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
-import static java.util.regex.Pattern.DOTALL;
 
 /**
  * Converts XML to JSON

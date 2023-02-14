@@ -2,8 +2,6 @@ package fr.arnaudguyon.xmltojsonlib;
 
 import android.content.Context;
 import android.content.res.AssetManager;
-import android.support.test.InstrumentationRegistry;
-import android.support.test.runner.AndroidJUnit4;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -18,6 +16,9 @@ import java.io.InputStream;
 import static org.junit.Assert.*;
 import static org.junit.Assert.assertTrue;
 
+import androidx.test.core.app.ApplicationProvider;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+
 /**
  * Instrumentation test, which will execute on an Android device.
  *
@@ -31,7 +32,7 @@ public class ExampleInstrumentedTest {
     @Test
     public void numbersTest() throws Exception {
 
-        Context context = InstrumentationRegistry.getTargetContext();
+        Context context = ApplicationProvider.getApplicationContext();
         AssetManager assetManager = context.getAssets();
         InputStream inputStream = assetManager.open("numbers.xml");
         XmlToJson xmlToJson = new XmlToJson.Builder(inputStream, null)
@@ -68,7 +69,7 @@ public class ExampleInstrumentedTest {
     @Test
     public void boolAndEmptyTest() throws Exception {
 
-        Context context = InstrumentationRegistry.getTargetContext();
+        Context context = ApplicationProvider.getApplicationContext();
         AssetManager assetManager = context.getAssets();
         InputStream inputStream = assetManager.open("numbers.xml");
         XmlToJson xmlToJson = new XmlToJson.Builder(inputStream, null)
@@ -117,7 +118,7 @@ public class ExampleInstrumentedTest {
     @Test
     public void issueGitHub3_Test() throws Exception {
 
-        Context context = InstrumentationRegistry.getTargetContext();
+        Context context = ApplicationProvider.getApplicationContext();
         AssetManager assetManager = context.getAssets();
         InputStream inputStream = assetManager.open("bug_3_github.xml");
 
@@ -150,7 +151,7 @@ public class ExampleInstrumentedTest {
 
     @Test
     public void skipAttributeTest() throws Exception {
-        Context context = InstrumentationRegistry.getTargetContext();
+        Context context = ApplicationProvider.getApplicationContext();
         AssetManager assetManager = context.getAssets();
         InputStream inputStream = assetManager.open("common.xml");
 
@@ -176,7 +177,7 @@ public class ExampleInstrumentedTest {
 
     @Test
     public void skipTagTest() throws Exception {
-        Context context = InstrumentationRegistry.getTargetContext();
+        Context context = ApplicationProvider.getApplicationContext();
         AssetManager assetManager = context.getAssets();
         InputStream inputStream = assetManager.open("common.xml");
 
@@ -197,7 +198,7 @@ public class ExampleInstrumentedTest {
     @Test
     public void attributeReplacementTest() throws Exception {
 
-        Context context = InstrumentationRegistry.getTargetContext();
+        Context context = ApplicationProvider.getApplicationContext();
         AssetManager assetManager = context.getAssets();
         InputStream inputStream = assetManager.open("common.xml");
 
@@ -220,7 +221,7 @@ public class ExampleInstrumentedTest {
     @Test
     public void contentReplacementTest() throws Exception {
 
-        Context context = InstrumentationRegistry.getTargetContext();
+        Context context = ApplicationProvider.getApplicationContext();
         AssetManager assetManager = context.getAssets();
         InputStream inputStream = assetManager.open("common.xml");
 
@@ -267,7 +268,7 @@ public class ExampleInstrumentedTest {
 
     @Test
     public void escapeSpecialCharsTest() throws Exception {
-        Context context = InstrumentationRegistry.getTargetContext();
+        Context context = ApplicationProvider.getApplicationContext();
         AssetManager assetManager = context.getAssets();
         InputStream inputStream = assetManager.open("escape_chars.xml");
 
@@ -287,7 +288,7 @@ public class ExampleInstrumentedTest {
     // RSS feed taken from https://www.bola.net/feed/
     @Test
     public void rssURLescaped() throws Exception {
-        Context context = InstrumentationRegistry.getTargetContext();
+        Context context = ApplicationProvider.getApplicationContext();
         AssetManager assetManager = context.getAssets();
         InputStream inputStream = assetManager.open("rss.xml");
 
@@ -316,7 +317,7 @@ public class ExampleInstrumentedTest {
     @Test
     public void pattern_Test() throws Exception {
 
-        Context context = InstrumentationRegistry.getTargetContext();
+        Context context = ApplicationProvider.getApplicationContext();
         AssetManager assetManager = context.getAssets();
         InputStream inputStream = assetManager.open("pattern.xml");
 
